@@ -593,7 +593,7 @@ export default function MobileAppPlanningSystem() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800" dir={dir}>
       {/* Hero Section with Interactive Mobile Icons */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800">
+      <div className="relative overflow-hidden bg-gradient-to-r from-[hsl(213,94%,68%)] via-[hsl(204,100%,73%)] to-[hsl(213,87%,60%)]">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative container mx-auto px-4 py-24">
           <div className="text-center">
@@ -618,7 +618,7 @@ export default function MobileAppPlanningSystem() {
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="bg-gradient-to-br from-sky-400/30 to-blue-500/20 backdrop-blur-sm rounded-3xl p-8 border border-sky-300/20 shadow-lg shadow-blue-500/25"
+                className="bg-gradient-to-br from-[hsl(213,94%,68%)]/30 to-[hsl(213,87%,60%)]/20 backdrop-blur-sm rounded-3xl p-8 border border-[hsl(213,94%,68%)]/20 shadow-lg shadow-[hsl(213,94%,68%)]/25"
                 data-testid="icon-mobile-central"
               >
                 <Smartphone className="w-24 h-24 text-white drop-shadow-lg" />
@@ -649,7 +649,7 @@ export default function MobileAppPlanningSystem() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto"
+              className="text-xl text-white/90 mb-8 max-w-3xl mx-auto"
               data-testid="text-service-description"
             >
               {lang === 'ar' 
@@ -706,9 +706,9 @@ export default function MobileAppPlanningSystem() {
                   className={cn(
                     "px-3 py-1 rounded-full text-sm font-medium transition-all",
                     index <= currentStep
-                      ? "bg-blue-600 text-white shadow-md"
+                      ? "bg-[hsl(213,94%,68%)] text-white shadow-md"
                       : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
-                    index === currentStep && "ring-2 ring-blue-300 ring-offset-2"
+                    index === currentStep && "ring-2 ring-[hsl(213,94%,68%)]/50 ring-offset-2"
                   )}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
