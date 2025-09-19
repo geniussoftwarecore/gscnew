@@ -12,7 +12,6 @@ import { SEOHead } from "@/components/SEOHead";
 import { useLanguage } from "@/i18n/lang";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
-import { toCanonicalKey } from "@/lib/services-normalize";
 import React, { useMemo, useState, useEffect, lazy, Suspense, useCallback } from "react";
 import ConsolidatedERPNextV15Section from "@/components/erpnext/ConsolidatedERPNextV15Section";
 import MobileAppPlanningSystem from "@/components/services/MobileAppPlanningSystem";
@@ -797,17 +796,17 @@ export default function ServiceDetailClean() {
     );
   };
 
-  // Optimized service query - fetch specific service by ID (with URL normalization)
-  const normalizedId = toCanonicalKey(id || '');
+  // Optimized service query - fetch specific service by ID
   const { data: service, isLoading, error } = useQuery<Service>({
-    queryKey: ['/api/services', normalizedId],
+    queryKey: ['/api/services', id],
     queryFn: async () => {
-      const response = await fetch(`/api/services/${normalizedId}`);
+      const response = await fetch(`/api/services/${id}`);
       if (!response.ok) {
         throw new Error('Service not found');
       }
       return response.json();
     },
+    enabled: !!id,
   });
 
   // Service subcategories query - fetch subcategories for this service
