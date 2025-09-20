@@ -1,79 +1,87 @@
-# Mobile App Development Service Platform
+# Genius Software Core (GSC) - Project Setup
 
 ## Overview
-Comprehensive full-stack application for a mobile app development service platform with React/Vite frontend, Express backend, and PostgreSQL database. The platform provides Arabic/English bilingual support with professional service offerings.
+GSC is a full-stack TypeScript application built with Vite, React, Express, and PostgreSQL. It's a comprehensive business platform featuring services management, CRM functionality, authentication, and more.
 
-## Recent Changes (Sept 19, 2025)
-- ✅ **Mobile App Service Redesign Complete**: Updated service name to "تطوير تطبيقات الموبايل"
-- ✅ **Interactive 7-Step Planning Wizard**: Completely redesigned mobile app planning system
-  - Step 1: App type selection (ecommerce, educational, healthcare, etc.)
-  - Step 2: Platform selection (iOS, Android, Cross-platform)
-  - Step 3: Feature selection (comprehensive list of app features)
-  - Step 4: Project details (name, description, timeline, budget)
-  - Step 5: File uploads (optional attachments)
-  - Step 6: Contact information
-  - Step 7: Review and submit
-- ✅ **Full Backend Integration**: Connected to existing `/api/mobile-app-orders` API
-- ✅ **File Upload System**: Implemented complete file upload functionality with multer
-- ✅ **Database Persistence**: All form data properly stored in `mobileAppOrders` table
-- ✅ **Professional UI/UX**: Interactive mobile icons, progress tracking, validation
+## Architecture
+- **Frontend**: React 18, Vite, TypeScript, TailwindCSS, shadcn/ui
+- **Backend**: Express.js, TypeScript  
+- **Database**: PostgreSQL with Drizzle ORM
+- **Development**: Unified dev server on port 5000
+- **Routing**: Wouter for SPA routing
+
+## Project Structure
+```
+├── client/                 # React frontend application
+│   ├── src/
+│   │   ├── components/     # Reusable UI components 
+│   │   ├── pages/          # Route components
+│   │   ├── lib/            # Utilities and configurations
+│   │   └── i18n/           # Internationalization
+├── server/                 # Express backend
+│   ├── index.ts           # Entry point
+│   ├── routes.ts          # API routes
+│   ├── db.ts              # Database configuration
+│   └── vite.ts            # Vite dev server setup
+├── shared/                 # Shared types and schemas
+└── attached_assets/        # Project assets and uploads
+```
+
+## Key Features
+- 🌐 Multi-language support (Arabic/English) with RTL/LTR
+- 🔐 Authentication system with role-based access control
+- 📊 CRM dashboard with customer management
+- 💼 Services portfolio with detailed pages
+- 📱 Responsive design with dark mode support
+- 🎨 Modern UI with animations and transitions
+- 📊 Real-time notifications and websocket support
+
+## Development Setup
+
+### Current Configuration
+- **Port**: 5000 (configured for Replit environment)
+- **Host**: 0.0.0.0 (allows external access)
+- **Database**: PostgreSQL with fallback to in-memory storage
+- **Dev Server**: Vite with HMR enabled
+- **Proxy Configuration**: `allowedHosts: true` for Replit compatibility
+
+### Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Run production server
+- `npm run db:push` - Sync database schema
+
+### Environment Variables
+See `.env.example` for complete configuration. Key variables:
+- `DATABASE_URL` - PostgreSQL connection string
+- `JWT_SECRET` - Authentication secret
+- `SESSION_SECRET` - Session security
+- `VITE_*` - Frontend environment variables
+
+## Replit Integration
+✅ **Configured for Replit**:
+- Workflow: "Start application" running on port 5000
+- Frontend properly configured with `allowedHosts: true`
+- Server binds to `0.0.0.0:5000` for external access
+- Deployment configured for autoscale with build/start scripts
+
+## Database Configuration
+- **Production**: Requires PostgreSQL with `DATABASE_URL`
+- **Development**: Falls back to in-memory storage if no database
+- **Schema**: Auto-synced with Drizzle ORM
+- **Seeding**: Automatic data seeding on startup
+
+## Recent Changes (September 20, 2025)
+- ✅ Project imported and configured for Replit environment
+- ✅ Workflow configured with webview output on port 5000
+- ✅ Database connection established and verified
+- ✅ Frontend/backend integration tested and working
+- ✅ Deployment configuration set up for autoscale
+- ✅ Application successfully running with all features operational
 
 ## User Preferences
-- Prefers bilingual support (Arabic/English) with RTL layout support
-- Focuses on professional service presentation
-- Values comprehensive step-by-step user experiences
-- Prefers existing backend integration over creating new APIs
-
-## Project Architecture
-
-### Frontend (React/Vite)
-- **Framework**: React 18 with Vite for fast development
-- **UI Library**: Tailwind CSS + shadcn/ui components
-- **State Management**: TanStack Query for server state, React hooks for local state
-- **Routing**: Wouter for client-side routing
-- **Forms**: React Hook Form with Zod validation
-- **Animations**: Framer Motion for smooth transitions
-
-### Backend (Express/Node.js)
-- **Server**: Express.js with TypeScript
-- **Database**: PostgreSQL with Drizzle ORM
-- **File Uploads**: Multer for handling multipart form data
-- **API Design**: RESTful endpoints with comprehensive error handling
-- **Session Management**: Express sessions with database store
-
-### Database Schema
-- **Services**: Service offerings with multilingual support
-- **MobileAppOrders**: Comprehensive mobile app development requests
-- **Testimonials**: Client testimonials and reviews
-- **File storage**: Organized uploads in `uploads/mobile-app-orders/`
-
-### Key Features
-- **Bilingual Support**: Arabic/English with proper RTL layout
-- **Interactive Wizards**: Step-by-step forms for complex processes
-- **File Upload System**: Secure file handling and storage
-- **Professional Design**: Modern UI with smooth animations
-- **Responsive Layout**: Mobile-first design approach
-- **SEO Optimized**: Meta tags and Open Graph implementation
-
-## Development Guidelines
-- Always use existing backend APIs when available
-- Maintain bilingual support in all new features
-- Follow shadcn/ui design patterns
-- Use TanStack Query for all API interactions
-- Implement proper validation with Zod schemas
-- Add data-testid attributes for all interactive elements
-
-## Current Status
-✅ **Production Ready**: Mobile app development service fully functional
-✅ **End-to-End Testing**: Complete workflow from frontend to database
-✅ **File Upload System**: Working file attachment system
-✅ **Professional UI**: Interactive and responsive design
-✅ **Database Integration**: All data properly persisted
-
-## Next Steps (Future Enhancements)
-- User authentication system
-- Admin dashboard for managing orders
-- Real-time status updates for projects
-- Automated email notifications
-- Payment integration
-- Project portfolio showcase
+- Modern TypeScript/React development patterns
+- Component-based architecture with shadcn/ui
+- Comprehensive feature set with attention to UX
+- Multi-language support with proper RTL handling
+- Professional business application design
