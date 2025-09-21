@@ -42,6 +42,8 @@ import {
   type InsertMobileAppOrder,
   type WebProjectOrder,
   type InsertWebProjectOrder,
+  type WebOrder,
+  type InsertWebOrder,
   users,
   contactSubmissions,
   portfolioItems,
@@ -63,7 +65,8 @@ import {
   ticketStatus,
   serviceAuditLog,
   mobileAppOrders,
-  webProjectOrders
+  webProjectOrders,
+  webOrders
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql } from "drizzle-orm";
@@ -1086,5 +1089,41 @@ export class DatabaseStorage implements IStorage {
     if (!db) throw new Error("Database not available");
     const result = await db.delete(ticketStatus).where(eq(ticketStatus.id, id));
     return result.rowCount > 0;
+  }
+
+  // Mobile App Orders
+  async createMobileAppOrder(order: InsertMobileAppOrder): Promise<MobileAppOrder> {
+    if (!db) throw new Error("Database not available");
+    const result = await db.insert(mobileAppOrders).values(order).returning();
+    return result[0];
+  }
+
+  async getAllMobileAppOrders(): Promise<MobileAppOrder[]> {
+    if (!db) throw new Error("Database not available");
+    return await db.select().from(mobileAppOrders).orderBy(desc(mobileAppOrders.createdAt));
+  }
+
+  // Web Project Orders
+  async createWebProjectOrder(order: InsertWebProjectOrder): Promise<WebProjectOrder> {
+    if (!db) throw new Error("Database not available");
+    const result = await db.insert(webProjectOrders).values(order).returning();
+    return result[0];
+  }
+
+  async getAllWebProjectOrders(): Promise<WebProjectOrder[]> {
+    if (!db) throw new Error("Database not available");
+    return await db.select().from(webProjectOrders).orderBy(desc(webProjectOrders.createdAt));
+  }
+
+  // Web Orders (for Web & Platforms Development Service Wizard)
+  async createWebOrder(order: InsertWebOrder): Promise<WebOrder> {
+    if (!db) throw new Error("Database not available");
+    const result = await db.insert(webOrders).values(order).returning();
+    return result[0];
+  }
+
+  async getAllWebOrders(): Promise<WebOrder[]> {
+    if (!db) throw new Error("Database not available");
+    return await db.select().from(webOrders).orderBy(desc(webOrders.createdAt));
   }
 }

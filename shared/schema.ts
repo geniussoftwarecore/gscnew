@@ -915,3 +915,66 @@ export const insertWebProjectOrderSchema = createInsertSchema(webProjectOrders).
 
 export type InsertWebProjectOrder = z.infer<typeof insertWebProjectOrderSchema>;
 export type WebProjectOrder = typeof webProjectOrders.$inferSelect;
+
+// Web Orders Table (for Web & Platforms Development Service Wizard)
+export const webOrders = pgTable("web_orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  // Customer Information
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone").notNull(),
+  
+  // Site Details
+  siteType: text("site_type").notNull(), // company_profile, blog_magazine, ecommerce, elearning, booking, custom_platform
+  
+  // Selected Features (JSON array of feature IDs)
+  selectedFeatures: jsonb("selected_features").$type<string[]>().default(sql`'[]'::jsonb`),
+  
+  // Project Requirements
+  contentScope: text("content_scope"), // sections/pages/content description
+  domainHosting: text("domain_hosting"), // domain and hosting details
+  languages: jsonb("languages").$type<string[]>().default(sql`'["ar"]'::jsonb`), // required languages
+  integrations: jsonb("integrations").$type<string[]>().default(sql`'[]'::jsonb`), // required integrations
+  
+  // File Attachments
+  attachments: jsonb("attachments").$type<Array<{
+    id: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    uploadedAt: string;
+  }>>().default(sql`'[]'::jsonb`),
+  
+  // Additional Information
+  notes: text("notes"), // additional notes and requirements
+  
+  // Order Status and Assignment
+  status: text("status").notNull().default("new"), // new, reviewed, in_progress, completed, cancelled
+  assignee: varchar("assignee").references(() => users.id), // assigned team member
+  
+  // Timestamps
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  // Indexes for performance
+  statusIdx: index("web_orders_status_idx").on(table.status),
+  siteTypeIdx: index("web_orders_site_type_idx").on(table.siteType),
+  customerEmailIdx: index("web_orders_customer_email_idx").on(table.customerEmail),
+  createdAtIdx: index("web_orders_created_at_idx").on(table.createdAt),
+  assigneeIdx: index("web_orders_assignee_idx").on(table.assignee),
+  
+  // Composite indexes for common queries
+  statusCreatedIdx: index("web_orders_status_created_idx").on(table.status, table.createdAt),
+  siteTypeStatusIdx: index("web_orders_site_type_status_idx").on(table.siteType, table.status),
+}));
+
+// Insert Schema for Web Orders
+export const insertWebOrderSchema = createInsertSchema(webOrders).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertWebOrder = z.infer<typeof insertWebOrderSchema>;
+export type WebOrder = typeof webOrders.$inferSelect;

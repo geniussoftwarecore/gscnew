@@ -42,6 +42,8 @@ import {
   type InsertMobileAppOrder,
   type WebProjectOrder,
   type InsertWebProjectOrder,
+  type WebOrder,
+  type InsertWebOrder,
   supportTickets,
   dealStages,
   ticketStatus
@@ -69,6 +71,10 @@ export interface IStorage {
   // Web Project Orders
   createWebProjectOrder(order: InsertWebProjectOrder): Promise<WebProjectOrder>;
   getAllWebProjectOrders(): Promise<WebProjectOrder[]>;
+  
+  // Web Orders (for Web & Platforms Development Service Wizard)
+  createWebOrder(order: InsertWebOrder): Promise<WebOrder>;
+  getAllWebOrders(): Promise<WebOrder[]>;
   
   // Portfolio Management
   getAllPortfolioItems(): Promise<PortfolioItem[]>;
@@ -287,6 +293,9 @@ export class MemStorage implements IStorage {
   private supportTickets: Map<string, SupportTicket>;
   private dealStages: Map<string, DealStage>;
   private ticketStatuses: Map<string, TicketStatus>;
+  private mobileAppOrders: Map<string, MobileAppOrder>;
+  private webProjectOrders: Map<string, WebProjectOrder>;
+  private webOrders: Map<string, WebOrder>;
 
   constructor() {
     this.users = new Map();
@@ -308,6 +317,9 @@ export class MemStorage implements IStorage {
     this.supportTickets = new Map();
     this.dealStages = new Map();
     this.ticketStatuses = new Map();
+    this.mobileAppOrders = new Map();
+    this.webProjectOrders = new Map();
+    this.webOrders = new Map();
     
     // Initialize with sample data
     this.initializeSampleData();
@@ -2457,5 +2469,84 @@ export class MemStorage implements IStorage {
 
     this.activities.set(activity1.id, activity1);
     this.activities.set(activity2.id, activity2);
+  }
+
+  // Mobile App Orders
+  async createMobileAppOrder(order: InsertMobileAppOrder): Promise<MobileAppOrder> {
+    const id = randomUUID();
+    const newOrder: MobileAppOrder = {
+      ...order,
+      id,
+      customerPhone: order.customerPhone || null,
+      customerCompany: order.customerCompany || null,
+      appName: order.appName || null,
+      appDescription: order.appDescription || null,
+      additionalRequirements: order.additionalRequirements || null,
+      attachedFiles: order.attachedFiles || [],
+      estimatedBudget: order.estimatedBudget || null,
+      preferredTimeline: order.preferredTimeline || null,
+      priority: order.priority || "normal",
+      assignedTo: order.assignedTo || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.mobileAppOrders.set(id, newOrder);
+    return newOrder;
+  }
+
+  async getAllMobileAppOrders(): Promise<MobileAppOrder[]> {
+    return Array.from(this.mobileAppOrders.values());
+  }
+
+  // Web Project Orders
+  async createWebProjectOrder(order: InsertWebProjectOrder): Promise<WebProjectOrder> {
+    const id = randomUUID();
+    const newOrder: WebProjectOrder = {
+      ...order,
+      id,
+      customerPhone: order.customerPhone || null,
+      customerCompany: order.customerCompany || null,
+      projectName: order.projectName || null,
+      projectDescription: order.projectDescription || null,
+      targetAudience: order.targetAudience || null,
+      additionalRequirements: order.additionalRequirements || null,
+      attachedFiles: order.attachedFiles || [],
+      estimatedBudget: order.estimatedBudget || null,
+      preferredTimeline: order.preferredTimeline || null,
+      priority: order.priority || "normal",
+      assignedTo: order.assignedTo || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.webProjectOrders.set(id, newOrder);
+    return newOrder;
+  }
+
+  async getAllWebProjectOrders(): Promise<WebProjectOrder[]> {
+    return Array.from(this.webProjectOrders.values());
+  }
+
+  // Web Orders (for Web & Platforms Development Service Wizard)
+  async createWebOrder(order: InsertWebOrder): Promise<WebOrder> {
+    const id = randomUUID();
+    const newOrder: WebOrder = {
+      ...order,
+      id,
+      contentScope: order.contentScope || null,
+      domainHosting: order.domainHosting || null,
+      languages: order.languages || ["ar"],
+      integrations: order.integrations || [],
+      attachments: order.attachments || [],
+      notes: order.notes || null,
+      assignee: order.assignee || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.webOrders.set(id, newOrder);
+    return newOrder;
+  }
+
+  async getAllWebOrders(): Promise<WebOrder[]> {
+    return Array.from(this.webOrders.values());
   }
 }
