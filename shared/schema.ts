@@ -847,3 +847,71 @@ export const insertMobileAppOrderSchema = createInsertSchema(mobileAppOrders).om
 
 export type InsertMobileAppOrder = z.infer<typeof insertMobileAppOrderSchema>;
 export type MobileAppOrder = typeof mobileAppOrders.$inferSelect;
+
+// Web Project Orders Table
+export const webProjectOrders = pgTable("web_project_orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  // Customer Information
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone"),
+  customerCompany: text("customer_company"),
+  
+  // Project Details
+  projectType: text("project_type").notNull(), // corporate, ecommerce, platform, portal, webapp, landing
+  projectName: text("project_name"),
+  projectDescription: text("project_description"),
+  targetAudience: text("target_audience"),
+  
+  // Selected Features (JSON array of feature IDs)
+  selectedFeatures: jsonb("selected_features").$type<string[]>().default(sql`'[]'::jsonb`),
+  
+  // Additional Requirements
+  additionalRequirements: text("additional_requirements"),
+  
+  // File Attachments
+  attachedFiles: jsonb("attached_files").$type<Array<{
+    id: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    uploadedAt: string;
+  }>>().default(sql`'[]'::jsonb`),
+  
+  // Budget and Timeline
+  estimatedBudget: text("estimated_budget"),
+  preferredTimeline: text("preferred_timeline"),
+  
+  // Order Status
+  status: text("status").notNull().default("pending"), // pending, reviewed, in_progress, completed, cancelled
+  priority: text("priority").default("normal"), // low, normal, high, urgent
+  
+  // Assignment
+  assignedTo: varchar("assigned_to").references(() => users.id),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  // Indexes for performance
+  statusIdx: index("web_orders_status_idx").on(table.status),
+  projectTypeIdx: index("web_orders_project_type_idx").on(table.projectType),
+  customerEmailIdx: index("web_orders_customer_email_idx").on(table.customerEmail),
+  createdAtIdx: index("web_orders_created_at_idx").on(table.createdAt),
+  assignedToIdx: index("web_orders_assigned_to_idx").on(table.assignedTo),
+  
+  // Composite indexes for common queries
+  statusCreatedIdx: index("web_orders_status_created_idx").on(table.status, table.createdAt),
+  projectTypeStatusIdx: index("web_orders_project_type_status_idx").on(table.projectType, table.status),
+}));
+
+// Insert Schema for Web Project Orders
+export const insertWebProjectOrderSchema = createInsertSchema(webProjectOrders).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertWebProjectOrder = z.infer<typeof insertWebProjectOrderSchema>;
+export type WebProjectOrder = typeof webProjectOrders.$inferSelect;

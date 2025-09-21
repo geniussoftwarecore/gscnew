@@ -40,6 +40,8 @@ import {
   type InsertServiceAuditLog,
   type MobileAppOrder,
   type InsertMobileAppOrder,
+  type WebProjectOrder,
+  type InsertWebProjectOrder,
   supportTickets,
   dealStages,
   ticketStatus
@@ -63,6 +65,10 @@ export interface IStorage {
   // Mobile App Orders
   createMobileAppOrder(order: InsertMobileAppOrder): Promise<MobileAppOrder>;
   getAllMobileAppOrders(): Promise<MobileAppOrder[]>;
+  
+  // Web Project Orders
+  createWebProjectOrder(order: InsertWebProjectOrder): Promise<WebProjectOrder>;
+  getAllWebProjectOrders(): Promise<WebProjectOrder[]>;
   
   // Portfolio Management
   getAllPortfolioItems(): Promise<PortfolioItem[]>;

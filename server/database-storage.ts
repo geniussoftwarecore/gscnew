@@ -40,6 +40,8 @@ import {
   type InsertServiceAuditLog,
   type MobileAppOrder,
   type InsertMobileAppOrder,
+  type WebProjectOrder,
+  type InsertWebProjectOrder,
   users,
   contactSubmissions,
   portfolioItems,
@@ -60,7 +62,8 @@ import {
   dealStages,
   ticketStatus,
   serviceAuditLog,
-  mobileAppOrders
+  mobileAppOrders,
+  webProjectOrders
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql } from "drizzle-orm";
@@ -201,6 +204,18 @@ export class DatabaseStorage implements IStorage {
   async getAllMobileAppOrders(): Promise<MobileAppOrder[]> {
     if (!db) throw new Error("Database not available");
     return await db.select().from(mobileAppOrders).orderBy(desc(mobileAppOrders.createdAt));
+  }
+
+  // Web Project Orders
+  async createWebProjectOrder(order: InsertWebProjectOrder): Promise<WebProjectOrder> {
+    if (!db) throw new Error("Database not available");
+    const result = await db.insert(webProjectOrders).values(order).returning();
+    return result[0];
+  }
+
+  async getAllWebProjectOrders(): Promise<WebProjectOrder[]> {
+    if (!db) throw new Error("Database not available");
+    return await db.select().from(webProjectOrders).orderBy(desc(webProjectOrders.createdAt));
   }
 
   // Portfolio Management
