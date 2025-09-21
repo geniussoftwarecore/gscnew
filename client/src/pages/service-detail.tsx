@@ -505,7 +505,11 @@ export default function ServiceDetailClean() {
 
   // If not mobile app service, show the ERPNext section or basic service view
   if (!isMobileAppService) {
-    const Icon = Globe; // Default icon for web services
+    const webIcons = [
+      { Icon: Globe, label: lang === 'ar' ? 'المواقع الإلكترونية' : 'Websites', delay: 0.1 },
+      { Icon: Layers, label: lang === 'ar' ? 'المنصات الرقمية' : 'Digital Platforms', delay: 0.2 },
+      { Icon: ShoppingCart, label: lang === 'ar' ? 'المتاجر الإلكترونية' : 'E-commerce', delay: 0.3 }
+    ];
     
     return (
       <>
@@ -549,10 +553,25 @@ export default function ServiceDetailClean() {
                 transition={{ duration: 0.6 }}
                 className="text-center mb-12"
               >
-                <div className="flex items-center justify-center mb-6">
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center">
-                    <Icon className="w-8 h-8 text-primary" />
-                  </div>
+                {/* Interactive Icons */}
+                <div className="flex items-center justify-center gap-6 mb-8">
+                  {webIcons.map(({ Icon, label, delay }, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay }}
+                      className="group cursor-pointer"
+                      data-testid={`icon-${index === 0 ? 'websites' : index === 1 ? 'platforms' : 'ecommerce'}`}
+                    >
+                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:bg-primary/20 dark:bg-primary/20 dark:group-hover:bg-primary/30">
+                        <Icon className="w-8 h-8 text-primary transition-colors duration-300 group-hover:text-primary-dark" />
+                      </div>
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        {label}
+                      </p>
+                    </motion.div>
+                  ))}
                 </div>
                 
                 <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
