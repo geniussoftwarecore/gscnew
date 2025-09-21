@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Clock, Smartphone, Shield, CheckCircle, Target, Palette, Globe, Plug, Store, Filter, Package, FileText, Settings, BookOpen, GraduationCap, BarChart3, Info, X, ChevronRight, Calendar, Code, Zap, HelpCircle, Layers, ShoppingCart, Users, Building, GraduationCapIcon, Upload, Check, ArrowRight } from "lucide-react";
+import { ArrowLeft, Clock, Smartphone, Shield, CheckCircle, Target, Palette, Globe, Plug, Store, Filter, Package, FileText, Settings, BookOpen, GraduationCap, BarChart3, Info, X, ChevronRight, Calendar, Code, Zap, HelpCircle, Layers, ShoppingCart, Users, Building, GraduationCapIcon, Upload, Check, ArrowRight, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,94 +80,157 @@ interface AppCard {
 }
 
 
-// Web development service categories with interactive icons
-const useWebCategories = () => {
-  const { t } = useTranslation();
+// Web Project Planning Wizard Types
+interface WebProjectType {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ComponentType<any>;
+  features: string[];
+  color: string;
+  bgColor: string;
+}
+
+interface PlanningState {
+  currentStep: number;
+  selectedProjectType: string | null;
+  selectedFeatures: string[];
+  uploadedFiles: File[];
+  projectDetails: {
+    projectName: string;
+    projectDescription: string;
+    targetAudience: string;
+    budget: string;
+    timeline: string;
+    additionalRequirements: string;
+  };
+  contactInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    company?: string;
+  };
+}
+
+// Web Project Types with Icons
+const useWebProjectTypes = (): WebProjectType[] => {
+  const { lang } = useLanguage();
   
   return [
-    { key: 'all', label: t('webPage.filters.all', 'جميع الأنواع') },
-    { key: 'website', label: t('webPage.filters.website', 'المواقع الإلكترونية'), icon: Globe },
-    { key: 'platform', label: t('webPage.filters.platform', 'المنصات الرقمية'), icon: Layers },
-    { key: 'ecommerce', label: t('webPage.filters.ecommerce', 'التجارة الإلكترونية'), icon: ShoppingCart }
-  ];
-};
-
-// Web development service specializations
-const useWebServiceCards = () => {
-  return [
-    // Web Development Category (3 cards)
-    { 
-      id: 'web1', 
-      category: 'website', 
-      title: 'مواقع الشركات والأعمال', 
-      shortDesc: 'مواقع احترافية تمثل هويتك التجارية بأفضل شكل', 
-      keyFeatures: ['تصميم متجاوب', 'لوحة تحكم سهلة', 'محرك بحث محسن (SEO)', 'تكامل شبكات اجتماعية', 'دعم RTL كامل'], 
-      tag: 'Professional',
-      longDesc: 'مواقع شركات احترافية مصممة لتمثيل علامتك التجارية بأفضل شكل مع تجربة مستخدم متميزة',
-      stack: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'PostgreSQL'],
-      integrations: ['Google Analytics', 'نماذج التواصل', 'خرائط Google', 'شبكات التواصل الاجتماعي'],
-      timeline: [
-        { phase: 'تحليل المتطلبات', note: 'دراسة الهوية التجارية والمتطلبات' },
-        { phase: 'التصميم وتجربة المستخدم', note: 'تصميم واجهات احترافية' },
-        { phase: 'التطوير والتكامل', note: 'بناء الموقع وربط الأنظمة' },
-        { phase: 'الاختبار والتسليم', note: 'اختبار شامل وتدريب المستخدمين' }
+    {
+      id: 'corporate',
+      name: lang === 'ar' ? 'موقع شركة' : 'Corporate Website',
+      description: lang === 'ar' ? 'مواقع احترافية للشركات والأعمال' : 'Professional websites for companies and businesses',
+      icon: Building,
+      features: lang === 'ar' ? [
+        'صفحات الشركة الأساسية',
+        'معرض الأعمال والخدمات',
+        'نماذج التواصل',
+        'دعم متعدد اللغات'
+      ] : [
+        'Essential company pages',
+        'Portfolio and services gallery',
+        'Contact forms',
+        'Multi-language support'
       ],
-      pricingNote: '',
-      faqs: [
-        { q: 'هل الموقع محسن لمحركات البحث؟', a: 'نعم، جميع مواقعنا محسنة بالكامل لمحركات البحث مع أفضل الممارسات.' },
-        { q: 'هل يمكنني تعديل المحتوى بنفسي؟', a: 'نعم، نوفر لوحة تحكم سهلة تمكنك من تحديث المحتوى بدون خبرة تقنية.' }
-      ],
-      images: [],
-      ctaLink: '/contact'
+      color: 'blue',
+      bgColor: 'bg-blue-50 hover:bg-blue-100'
     },
-    { 
-      id: 'platform1', 
-      category: 'platform', 
-      title: 'منصات إدارة المحتوى', 
-      shortDesc: 'منصات قوية لإدارة وعرض المحتوى', 
-      keyFeatures: ['محرر نصوص متقدم', 'إدارة المستخدمين', 'نظام أذونات', 'تصدير المحتوى', 'تحليلات المحتوى'], 
-      tag: 'Platform',
-      longDesc: 'منصات إدارة محتوى قوية ومرنة تتيح لك السيطرة الكاملة على المحتوى والمستخدمين',
-      stack: ['React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS'],
-      integrations: ['أنظمة الدفع', 'خدمات التخزين السحابي', 'تحليلات المحتوى', 'شبكات التوصيل'],
-      timeline: [
-        { phase: 'تحليل المتطلبات', note: 'دراسة احتياجات المنصة' },
-        { phase: 'التصميم وتجربة المستخدم', note: 'تصميم واجهة إدارية قوية' },
-        { phase: 'التطوير والتكامل', note: 'بناء النظام وربط الأنظمة' },
-        { phase: 'الاختبار والتسليم', note: 'اختبار شامل وتدريب المدراء' }
+    {
+      id: 'ecommerce',
+      name: lang === 'ar' ? 'متجر إلكتروني' : 'E-commerce Store',
+      description: lang === 'ar' ? 'متاجر إلكترونية متطورة للتجارة الرقمية' : 'Advanced e-commerce stores for digital trade',
+      icon: ShoppingCart,
+      features: lang === 'ar' ? [
+        'كتالوج منتجات شامل',
+        'سلة شراء ونظام دفع',
+        'إدارة المخزون',
+        'تقارير المبيعات'
+      ] : [
+        'Comprehensive product catalog',
+        'Shopping cart & payment system',
+        'Inventory management',
+        'Sales reports'
       ],
-      pricingNote: '',
-      faqs: [
-        { q: 'كم يستغرق تطوير المنصة؟', a: '6-12 أسبوع حسب تعقيد المتطلبات والميزات المطلوبة.' }
-      ],
-      images: [],
-      ctaLink: '/contact'
+      color: 'green',
+      bgColor: 'bg-green-50 hover:bg-green-100'
     },
-    { 
-      id: 'ecommerce1', 
-      category: 'ecommerce', 
-      title: 'متاجر إلكترونية متقدمة', 
-      shortDesc: 'متاجر إلكترونية قوية مع ميزات تجارية متطورة', 
-      keyFeatures: ['سلة شراء ذكية', 'بوابات دفع متعددة', 'إدارة مخزون', 'تقارير مبيعات', 'برامج ولاء العملاء'], 
-      longDesc: 'متاجر إلكترونية احترافية مع جميع الميزات المطلوبة لنجاح تجارتك الإلكترونية',
-      stack: ['React', 'Next.js', 'Node.js', 'PostgreSQL', 'Stripe'],
-      integrations: ['بوابات الدفع المحلية والعالمية', 'خدمات الشحن', 'إدارة المخزون', 'تحليلات المبيعات'],
-      timeline: [
-        { phase: 'تحليل المتطلبات', note: 'دراسة المنتجات ونموذج العمل' },
-        { phase: 'التصميم وتجربة المستخدم', note: 'تصميم تجربة تسوق مميزة' },
-        { phase: 'التطوير والتكامل', note: 'بناء المتجر وربط الأنظمة' },
-        { phase: 'الاختبار والتسليم', note: 'اختبار شامل وإطلاق المتجر' }
+    {
+      id: 'platform',
+      name: lang === 'ar' ? 'منصة رقمية' : 'Digital Platform',
+      description: lang === 'ar' ? 'منصات إدارة المحتوى والأعمال' : 'Content and business management platforms',
+      icon: Layers,
+      features: lang === 'ar' ? [
+        'إدارة المستخدمين',
+        'لوحات تحكم متقدمة',
+        'تقارير وتحليلات',
+        'واجهات برمجة التطبيقات'
+      ] : [
+        'User management',
+        'Advanced dashboards',
+        'Reports and analytics',
+        'API interfaces'
       ],
-      pricingNote: '',
-      faqs: [
-        { q: 'ما هي بوابات الدفع المدعومة؟', a: 'ندعم جميع بوابات الدفع المحلية والعالمية مثل فيزا، ماستركارد، مدى، والتحويل البنكي.' }
-      ],
-      images: [],
-      ctaLink: '/contact'
+      color: 'purple',
+      bgColor: 'bg-purple-50 hover:bg-purple-100'
     },
-
-
-
+    {
+      id: 'portal',
+      name: lang === 'ar' ? 'بوابة إلكترونية' : 'Web Portal',
+      description: lang === 'ar' ? 'بوابات متخصصة للخدمات والمعلومات' : 'Specialized portals for services and information',
+      icon: Globe,
+      features: lang === 'ar' ? [
+        'نظام عضويات',
+        'محتوى تفاعلي',
+        'منتديات ومجتمعات',
+        'أدوات تعاون'
+      ] : [
+        'Membership system',
+        'Interactive content',
+        'Forums and communities',
+        'Collaboration tools'
+      ],
+      color: 'indigo',
+      bgColor: 'bg-indigo-50 hover:bg-indigo-100'
+    },
+    {
+      id: 'webapp',
+      name: lang === 'ar' ? 'تطبيق ويب' : 'Web Application',
+      description: lang === 'ar' ? 'تطبيقات ويب تفاعلية ومتطورة' : 'Interactive and advanced web applications',
+      icon: Code,
+      features: lang === 'ar' ? [
+        'واجهات تفاعلية',
+        'معالجة البيانات',
+        'تكامل مع الأنظمة',
+        'أمان متقدم'
+      ] : [
+        'Interactive interfaces',
+        'Data processing',
+        'System integration',
+        'Advanced security'
+      ],
+      color: 'orange',
+      bgColor: 'bg-orange-50 hover:bg-orange-100'
+    },
+    {
+      id: 'landing',
+      name: lang === 'ar' ? 'صفحة هبوط' : 'Landing Page',
+      description: lang === 'ar' ? 'صفحات هبوط محسنة للتحويل' : 'Conversion-optimized landing pages',
+      icon: Zap,
+      features: lang === 'ar' ? [
+        'تصميم جذاب ومؤثر',
+        'محسن للتحويل',
+        'نماذج ذكية',
+        'تتبع التحليلات'
+      ] : [
+        'Attractive and impactful design',
+        'Conversion optimized',
+        'Smart forms',
+        'Analytics tracking'
+      ],
+      color: 'pink',
+      bgColor: 'bg-pink-50 hover:bg-pink-100'
+    }
   ];
 };
 
@@ -181,9 +244,670 @@ export default function ServiceDetailClean() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [visibleCards, setVisibleCards] = useState(8);
 
-  // Use the web service categories and cards
+  // Planning wizard state for web services
+  const [planningState, setPlanningState] = useState<PlanningState>({
+    currentStep: 1,
+    selectedProjectType: null,
+    selectedFeatures: [],
+    uploadedFiles: [],
+    projectDetails: {
+      projectName: '',
+      projectDescription: '',
+      targetAudience: '',
+      budget: '',
+      timeline: '',
+      additionalRequirements: ''
+    },
+    contactInfo: {
+      name: '',
+      email: '',
+      phone: '',
+      company: ''
+    }
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get project types and features
+  const projectTypes = useWebProjectTypes();
+  
+  // Use the web service categories and cards for non-web services
   const categories = useWebCategories();
   const appCards = useWebServiceCards();
+
+  // Web Development Features
+  const getWebFeatures = () => [
+    // Core Features
+    {
+      id: 'responsive_design',
+      name: lang === 'ar' ? 'تصميم متجاوب' : 'Responsive Design',
+      description: lang === 'ar' ? 'تجربة مثالية على جميع الأجهزة' : 'Perfect experience on all devices',
+      category: 'core',
+      isRequired: true
+    },
+    {
+      id: 'seo_optimization',
+      name: lang === 'ar' ? 'تحسين محركات البحث' : 'SEO Optimization',
+      description: lang === 'ar' ? 'ظهور أفضل في نتائج البحث' : 'Better visibility in search results',
+      category: 'core'
+    },
+    {
+      id: 'performance_optimization',
+      name: lang === 'ar' ? 'تحسين الأداء' : 'Performance Optimization',
+      description: lang === 'ar' ? 'سرعة تحميل فائقة' : 'Lightning fast loading speed',
+      category: 'core'
+    },
+    {
+      id: 'ssl_security',
+      name: lang === 'ar' ? 'شهادة SSL' : 'SSL Certificate',
+      description: lang === 'ar' ? 'حماية وتشفير البيانات' : 'Data protection and encryption',
+      category: 'core'
+    },
+
+    // Business Features
+    {
+      id: 'cms_system',
+      name: lang === 'ar' ? 'نظام إدارة المحتوى' : 'Content Management System',
+      description: lang === 'ar' ? 'إدارة سهلة للمحتوى' : 'Easy content management',
+      category: 'business'
+    },
+    {
+      id: 'user_accounts',
+      name: lang === 'ar' ? 'حسابات المستخدمين' : 'User Accounts',
+      description: lang === 'ar' ? 'تسجيل دخول وإدارة المستخدمين' : 'Login and user management',
+      category: 'business'
+    },
+    {
+      id: 'admin_dashboard',
+      name: lang === 'ar' ? 'لوحة تحكم الإدارة' : 'Admin Dashboard',
+      description: lang === 'ar' ? 'لوحة شاملة لإدارة الموقع' : 'Comprehensive website management panel',
+      category: 'business'
+    },
+    {
+      id: 'analytics_integration',
+      name: lang === 'ar' ? 'تكامل التحليلات' : 'Analytics Integration',
+      description: lang === 'ar' ? 'تتبع الزوار والإحصائيات' : 'Visitor tracking and statistics',
+      category: 'business'
+    },
+
+    // E-commerce Features
+    {
+      id: 'shopping_cart',
+      name: lang === 'ar' ? 'سلة التسوق' : 'Shopping Cart',
+      description: lang === 'ar' ? 'نظام شراء متطور' : 'Advanced shopping system',
+      category: 'ecommerce'
+    },
+    {
+      id: 'payment_gateway',
+      name: lang === 'ar' ? 'بوابة الدفع' : 'Payment Gateway',
+      description: lang === 'ar' ? 'دفع آمن ومتعدد الطرق' : 'Secure multi-method payment',
+      category: 'ecommerce'
+    },
+    {
+      id: 'inventory_management',
+      name: lang === 'ar' ? 'إدارة المخزون' : 'Inventory Management',
+      description: lang === 'ar' ? 'تتبع وإدارة المنتجات' : 'Product tracking and management',
+      category: 'ecommerce'
+    },
+
+    // Technical Features
+    {
+      id: 'api_integration',
+      name: lang === 'ar' ? 'تكامل واجهات البرمجة' : 'API Integration',
+      description: lang === 'ar' ? 'ربط مع الأنظمة الخارجية' : 'Connect with external systems',
+      category: 'technical'
+    },
+    {
+      id: 'database_optimization',
+      name: lang === 'ar' ? 'تحسين قاعدة البيانات' : 'Database Optimization',
+      description: lang === 'ar' ? 'أداء فائق لقاعدة البيانات' : 'Superior database performance',
+      category: 'technical'
+    },
+    {
+      id: 'backup_system',
+      name: lang === 'ar' ? 'نظام النسخ الاحتياطي' : 'Backup System',
+      description: lang === 'ar' ? 'حماية البيانات والملفات' : 'Data and file protection',
+      category: 'technical'
+    }
+  ];
+
+  // Planning wizard steps
+  const planSteps = [
+    {
+      id: 1,
+      title: lang === 'ar' ? 'نوع المشروع' : 'Project Type',
+      description: lang === 'ar' ? 'اختر نوع الموقع أو المنصة' : 'Choose website or platform type'
+    },
+    {
+      id: 2,
+      title: lang === 'ar' ? 'الميزات' : 'Features',
+      description: lang === 'ar' ? 'حدد الميزات المطلوبة' : 'Select required features'
+    },
+    {
+      id: 3,
+      title: lang === 'ar' ? 'تفاصيل المشروع' : 'Project Details',
+      description: lang === 'ar' ? 'أضف تفاصيل مشروعك' : 'Add your project details'
+    },
+    {
+      id: 4,
+      title: lang === 'ar' ? 'الملفات والمستندات' : 'Files & Documents',
+      description: lang === 'ar' ? 'ارفع الملفات ذات الصلة' : 'Upload relevant files'
+    },
+    {
+      id: 5,
+      title: lang === 'ar' ? 'معلومات التواصل' : 'Contact Info',
+      description: lang === 'ar' ? 'أدخل معلومات التواصل' : 'Enter contact information'
+    }
+  ];
+
+  // Submit mutation for web project
+  const submitWebProject = useMutation({
+    mutationFn: async () => {
+      const formData = new FormData();
+      
+      // Add customer information
+      formData.append('customerName', planningState.contactInfo.name);
+      formData.append('customerEmail', planningState.contactInfo.email);
+      formData.append('customerPhone', planningState.contactInfo.phone);
+      if (planningState.contactInfo.company) {
+        formData.append('customerCompany', planningState.contactInfo.company);
+      }
+      
+      // Add project details
+      formData.append('projectType', planningState.selectedProjectType || '');
+      if (planningState.projectDetails.projectName) {
+        formData.append('projectName', planningState.projectDetails.projectName);
+      }
+      if (planningState.projectDetails.projectDescription) {
+        formData.append('projectDescription', planningState.projectDetails.projectDescription);
+      }
+      
+      // Add selected features as JSON string
+      formData.append('selectedFeatures', JSON.stringify(planningState.selectedFeatures));
+      
+      // Add additional requirements
+      let additionalRequirements = planningState.projectDetails.additionalRequirements || '';
+      
+      if (planningState.projectDetails.targetAudience) {
+        additionalRequirements += `\n\nالجمهور المستهدف: ${planningState.projectDetails.targetAudience}`;
+      }
+      
+      formData.append('additionalRequirements', additionalRequirements);
+      
+      // Add budget and timeline
+      if (planningState.projectDetails.budget) {
+        formData.append('estimatedBudget', planningState.projectDetails.budget);
+      }
+      if (planningState.projectDetails.timeline) {
+        formData.append('preferredTimeline', planningState.projectDetails.timeline);
+      }
+      
+      // Add files
+      planningState.uploadedFiles.forEach((file) => {
+        formData.append('attachedFiles', file);
+      });
+
+      const response = await fetch('/api/web-project-orders', {
+        method: 'POST',
+        body: formData
+      });
+      if (!response.ok) {
+        throw new Error('Failed to submit request');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      alert(lang === 'ar' ? 'تم إرسال طلبك بنجاح! سنتواصل معك قريباً.' : 'Your request has been submitted successfully! We will contact you soon.');
+      
+      // Reset planning state
+      setPlanningState({
+        currentStep: 1,
+        selectedProjectType: null,
+        selectedFeatures: [],
+        uploadedFiles: [],
+        projectDetails: {
+          projectName: '',
+          projectDescription: '',
+          targetAudience: '',
+          budget: '',
+          timeline: '',
+          additionalRequirements: ''
+        },
+        contactInfo: {
+          name: '',
+          email: '',
+          phone: '',
+          company: ''
+        }
+      });
+    },
+    onError: () => {
+      alert(lang === 'ar' ? 'حدث خطأ، يرجى المحاولة مرة أخرى.' : 'An error occurred, please try again.');
+    }
+  });
+
+  // Render Planning Wizard Function
+  const renderPlanningWizard = () => {
+    switch (planningState.currentStep) {
+      case 1:
+        return renderProjectTypeSelection();
+      case 2:
+        return renderFeatureSelection();
+      case 3:
+        return renderProjectDetails();
+      case 4:
+        return renderFileUpload();
+      case 5:
+        return renderContactForm();
+      default:
+        return renderProjectTypeSelection();
+    }
+  };
+
+  // Step 1: Project Type Selection
+  const renderProjectTypeSelection = () => (
+    <Card className="w-full" data-testid="step-project-type">
+      <CardHeader>
+        <CardTitle className="text-center">
+          {lang === 'ar' ? 'اختر نوع مشروعك' : 'Choose Your Project Type'}
+        </CardTitle>
+        <p className="text-center text-gray-600 dark:text-gray-300">
+          {lang === 'ar' ? 'حدد نوع الموقع أو المنصة التي تريد تطويرها' : 'Select the type of website or platform you want to develop'}
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {projectTypes.map((type) => {
+            const IconComponent = type.icon;
+            return (
+              <motion.div
+                key={type.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={cn(
+                  "p-4 border-2 rounded-lg cursor-pointer transition-all",
+                  planningState.selectedProjectType === type.id
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                    : "border-gray-200 hover:border-gray-300"
+                )}
+                onClick={() => setPlanningState(prev => ({ ...prev, selectedProjectType: type.id }))}
+                data-testid={`project-type-${type.id}`}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <IconComponent className="w-8 h-8 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900 dark:text-white">{type.name}</h3>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{type.description}</p>
+                <ul className="space-y-1">
+                  {type.features.slice(0, 3).map((feature, index) => (
+                    <li key={index} className="flex items-center text-xs text-gray-500">
+                      <CheckCircle className="w-3 h-3 text-green-500 mr-2" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            );
+          })}
+        </div>
+        
+        <div className="flex justify-between pt-6">
+          <Button variant="outline" disabled>
+            {lang === 'ar' ? 'السابق' : 'Previous'}
+          </Button>
+          <Button 
+            onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 2 }))}
+            disabled={!planningState.selectedProjectType}
+            data-testid="button-next-features"
+          >
+            {lang === 'ar' ? 'التالي: الميزات' : 'Next: Features'}
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  // Step 2: Feature Selection
+  const renderFeatureSelection = () => {
+    const features = getWebFeatures();
+    const coreFeatures = features.filter(f => f.category === 'core');
+    const businessFeatures = features.filter(f => f.category === 'business');
+    const ecommerceFeatures = features.filter(f => f.category === 'ecommerce');
+    const technicalFeatures = features.filter(f => f.category === 'technical');
+
+    return (
+      <Card className="w-full" data-testid="step-features">
+        <CardHeader>
+          <CardTitle className="text-center">
+            {lang === 'ar' ? 'اختر الميزات المطلوبة' : 'Select Required Features'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-6">
+            {/* Core Features */}
+            <div>
+              <h3 className="font-semibold text-lg mb-3">{lang === 'ar' ? 'الميزات الأساسية' : 'Core Features'}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {coreFeatures.map((feature) => (
+                  <label key={feature.id} className="flex items-start space-x-3 cursor-pointer">
+                    <Checkbox
+                      checked={planningState.selectedFeatures.includes(feature.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setPlanningState(prev => ({
+                            ...prev,
+                            selectedFeatures: [...prev.selectedFeatures, feature.id]
+                          }));
+                        } else {
+                          setPlanningState(prev => ({
+                            ...prev,
+                            selectedFeatures: prev.selectedFeatures.filter(id => id !== feature.id)
+                          }));
+                        }
+                      }}
+                      data-testid={`feature-${feature.id}`}
+                    />
+                    <div className="space-y-1">
+                      <p className="font-medium">{feature.name}</p>
+                      <p className="text-sm text-gray-600">{feature.description}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Business Features */}
+            <div>
+              <h3 className="font-semibold text-lg mb-3">{lang === 'ar' ? 'ميزات الأعمال' : 'Business Features'}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {businessFeatures.map((feature) => (
+                  <label key={feature.id} className="flex items-start space-x-3 cursor-pointer">
+                    <Checkbox
+                      checked={planningState.selectedFeatures.includes(feature.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setPlanningState(prev => ({
+                            ...prev,
+                            selectedFeatures: [...prev.selectedFeatures, feature.id]
+                          }));
+                        } else {
+                          setPlanningState(prev => ({
+                            ...prev,
+                            selectedFeatures: prev.selectedFeatures.filter(id => id !== feature.id)
+                          }));
+                        }
+                      }}
+                      data-testid={`feature-${feature.id}`}
+                    />
+                    <div className="space-y-1">
+                      <p className="font-medium">{feature.name}</p>
+                      <p className="text-sm text-gray-600">{feature.description}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between pt-6">
+            <Button 
+              variant="outline"
+              onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 1 }))}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {lang === 'ar' ? 'السابق' : 'Previous'}
+            </Button>
+            <Button 
+              onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 3 }))}
+              data-testid="button-next-details"
+            >
+              {lang === 'ar' ? 'التالي: التفاصيل' : 'Next: Details'}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Step 3: Project Details
+  const renderProjectDetails = () => (
+    <Card className="w-full" data-testid="step-details">
+      <CardHeader>
+        <CardTitle className="text-center">
+          {lang === 'ar' ? 'تفاصيل المشروع' : 'Project Details'}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="projectName">{lang === 'ar' ? 'اسم المشروع' : 'Project Name'}</Label>
+            <Input
+              id="projectName"
+              value={planningState.projectDetails.projectName}
+              onChange={(e) => setPlanningState(prev => ({
+                ...prev,
+                projectDetails: { ...prev.projectDetails, projectName: e.target.value }
+              }))}
+              data-testid="input-project-name"
+            />
+          </div>
+          <div>
+            <Label htmlFor="budget">{lang === 'ar' ? 'الميزانية المتوقعة' : 'Expected Budget'}</Label>
+            <Input
+              id="budget"
+              value={planningState.projectDetails.budget}
+              onChange={(e) => setPlanningState(prev => ({
+                ...prev,
+                projectDetails: { ...prev.projectDetails, budget: e.target.value }
+              }))}
+              placeholder={lang === 'ar' ? 'مثال: 50,000 ريال' : 'e.g., 50,000 SAR'}
+              data-testid="input-budget"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <Label htmlFor="projectDescription">{lang === 'ar' ? 'وصف المشروع' : 'Project Description'}</Label>
+          <Textarea
+            id="projectDescription"
+            value={planningState.projectDetails.projectDescription}
+            onChange={(e) => setPlanningState(prev => ({
+              ...prev,
+              projectDetails: { ...prev.projectDetails, projectDescription: e.target.value }
+            }))}
+            rows={4}
+            data-testid="input-project-description"
+          />
+        </div>
+
+        <div className="flex justify-between pt-6">
+          <Button 
+            variant="outline"
+            onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 2 }))}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {lang === 'ar' ? 'السابق' : 'Previous'}
+          </Button>
+          <Button 
+            onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 4 }))}
+            data-testid="button-next-files"
+          >
+            {lang === 'ar' ? 'التالي: الملفات' : 'Next: Files'}
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  // Step 4: File Upload
+  const renderFileUpload = () => (
+    <Card className="w-full" data-testid="step-files">
+      <CardHeader>
+        <CardTitle className="text-center">
+          {lang === 'ar' ? 'رفع الملفات (اختياري)' : 'Upload Files (Optional)'}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">
+            {lang === 'ar' ? 'اسحب الملفات هنا أو انقر للاختيار' : 'Drag files here or click to select'}
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            {lang === 'ar' ? 'PDF, DOC, صور - حتى 10MB' : 'PDF, DOC, Images - up to 10MB'}
+          </p>
+          <input
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+            onChange={(e) => {
+              if (e.target.files) {
+                const newFiles = Array.from(e.target.files);
+                setPlanningState(prev => ({
+                  ...prev,
+                  uploadedFiles: [...prev.uploadedFiles, ...newFiles]
+                }));
+              }
+            }}
+            className="mt-4"
+            data-testid="input-files"
+          />
+        </div>
+
+        {planningState.uploadedFiles.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="font-medium">{lang === 'ar' ? 'الملفات المرفوعة:' : 'Uploaded Files:'}</h4>
+            {planningState.uploadedFiles.map((file, index) => (
+              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                <span className="text-sm">{file.name}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPlanningState(prev => ({
+                    ...prev,
+                    uploadedFiles: prev.uploadedFiles.filter((_, i) => i !== index)
+                  }))}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex justify-between pt-6">
+          <Button 
+            variant="outline"
+            onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 3 }))}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {lang === 'ar' ? 'السابق' : 'Previous'}
+          </Button>
+          <Button 
+            onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 5 }))}
+            data-testid="button-next-contact"
+          >
+            {lang === 'ar' ? 'التالي: التواصل' : 'Next: Contact'}
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  // Step 5: Contact Form
+  const renderContactForm = () => (
+    <Card className="w-full" data-testid="step-contact">
+      <CardHeader>
+        <CardTitle className="text-center">
+          {lang === 'ar' ? 'معلومات التواصل' : 'Contact Information'}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="name">{lang === 'ar' ? 'الاسم *' : 'Name *'}</Label>
+            <Input
+              id="name"
+              required
+              value={planningState.contactInfo.name}
+              onChange={(e) => setPlanningState(prev => ({
+                ...prev,
+                contactInfo: { ...prev.contactInfo, name: e.target.value }
+              }))}
+              data-testid="input-name"
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">{lang === 'ar' ? 'البريد الإلكتروني *' : 'Email *'}</Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              value={planningState.contactInfo.email}
+              onChange={(e) => setPlanningState(prev => ({
+                ...prev,
+                contactInfo: { ...prev.contactInfo, email: e.target.value }
+              }))}
+              data-testid="input-email"
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="phone">{lang === 'ar' ? 'رقم الهاتف *' : 'Phone *'}</Label>
+            <Input
+              id="phone"
+              required
+              value={planningState.contactInfo.phone}
+              onChange={(e) => setPlanningState(prev => ({
+                ...prev,
+                contactInfo: { ...prev.contactInfo, phone: e.target.value }
+              }))}
+              data-testid="input-phone"
+            />
+          </div>
+          <div>
+            <Label htmlFor="company">{lang === 'ar' ? 'اسم الشركة (اختياري)' : 'Company Name (Optional)'}</Label>
+            <Input
+              id="company"
+              value={planningState.contactInfo.company}
+              onChange={(e) => setPlanningState(prev => ({
+                ...prev,
+                contactInfo: { ...prev.contactInfo, company: e.target.value }
+              }))}
+              data-testid="input-company"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-between pt-6">
+          <Button 
+            variant="outline"
+            onClick={() => setPlanningState(prev => ({ ...prev, currentStep: 4 }))}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {lang === 'ar' ? 'السابق' : 'Previous'}
+          </Button>
+          <Button 
+            onClick={() => submitWebProject.mutate()}
+            disabled={!planningState.contactInfo.name || !planningState.contactInfo.email || !planningState.contactInfo.phone || submitWebProject.isPending}
+            data-testid="button-submit"
+          >
+            {submitWebProject.isPending 
+              ? (lang === 'ar' ? 'جاري الإرسال...' : 'Submitting...') 
+              : (lang === 'ar' ? 'إرسال الطلب' : 'Submit Request')
+            }
+            <Send className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   // Handle deep linking with hash fragments
   useEffect(() => {
@@ -516,7 +1240,94 @@ export default function ServiceDetailClean() {
     );
   }
 
-  // If not mobile app service, show the ERPNext section or basic service view
+  // Check if this is the web development service
+  const isWebDevelopmentService = id === '3772c096-88ef-475a-a8a4-e305adfcd798';
+
+  // If it's the web development service, show the planning wizard
+  if (isWebDevelopmentService) {
+    return (
+      <>
+        <SEOHead
+          title={`${service?.title || 'تطوير المواقع والمنصات'} - ${lang === 'ar' ? 'جينيوس سوفتوير' : 'Genius Software'}`}
+          description={service?.description || 'نطور مواقع ومنصات رقمية احترافية'}
+        />
+        
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800" dir={dir}>
+          {/* Back Button */}
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Button 
+                variant="ghost" 
+                onClick={() => setLocation('/services')}
+                className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              >
+                <ArrowLeft className={cn("w-4 h-4 mr-2", dir === 'rtl' && "rotate-180 mr-0 ml-2")} />
+                {lang === 'ar' ? 'العودة للخدمات' : 'Back to Services'}
+              </Button>
+            </motion.div>
+          </div>
+
+          {/* Service Header with Icons */}
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <div className="flex justify-center items-center gap-6 mb-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  className="p-4 bg-blue-100 dark:bg-blue-900 rounded-full"
+                >
+                  <Globe className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="p-4 bg-purple-100 dark:bg-purple-900 rounded-full"
+                >
+                  <Layers className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.3 }}
+                  className="p-4 bg-green-100 dark:bg-green-900 rounded-full"
+                >
+                  <ShoppingCart className="w-8 h-8 text-green-600 dark:text-green-400" />
+                </motion.div>
+              </div>
+              
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                {lang === 'ar' ? 'تطوير المواقع والمنصات' : 'Web & Platform Development'}
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                {lang === 'ar' 
+                  ? 'خطط مشروعك التقني معنا من خلال معالج التخطيط التفاعلي'
+                  : 'Plan your technical project with us through our interactive planning wizard'
+                }
+              </p>
+            </motion.div>
+
+            {/* Planning Wizard */}
+            <div className="max-w-4xl mx-auto">
+              {renderPlanningWizard()}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // If not mobile app service and not web development service, show the ERPNext section or basic service view
   if (!isMobileAppService) {
     const webIcons = [
       { Icon: Globe, label: lang === 'ar' ? 'المواقع الإلكترونية' : 'Websites', delay: 0.1 },
