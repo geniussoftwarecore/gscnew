@@ -710,6 +710,26 @@ export type UserSubscription = typeof userSubscriptions.$inferSelect;
 export type InsertServiceRequest = z.infer<typeof insertServiceRequestSchema>;
 export type ServiceRequest = typeof serviceRequests.$inferSelect;
 
+// Project Request Wizard Schema (for frontend form)
+export const projectRequestSchema = z.object({
+  category: z.enum(["commercial", "educational", "other"]),
+  categoryOtherNote: z.string().optional(),
+  buildKind: z.enum(["website", "ecommerce", "platform"]),
+  features: z.array(z.string()).min(1, "يرجى اختيار ميزة واحدة على الأقل"),
+  ideaSummary: z.string().min(20, "يرجى كتابة وصف أكثر تفصيلاً (20 حرف على الأقل)"),
+  targetAudience: z.string().optional(),
+  domain: z.string().optional(),
+  hasHosting: z.boolean().optional(),
+  attachments: z.array(z.object({
+    fileName: z.string(),
+    size: z.number(),
+    mime: z.string(),
+    tempUrl: z.string().optional()
+  })).default([])
+});
+
+export type ProjectRequestFormData = z.infer<typeof projectRequestSchema>;
+
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 export type Project = typeof projects.$inferSelect;
 
