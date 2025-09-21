@@ -28,7 +28,8 @@ import {
   insertUserSchema,
   insertSavedFilterSchema,
   insertMobileAppOrderSchema,
-  insertWebProjectOrderSchema
+  insertWebProjectOrderSchema,
+  insertWebOrderSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { createObjectCsvWriter } from 'csv-writer';
@@ -40,7 +41,12 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-const webUploadsDir = path.join(process.cwd(), 'uploads/web-project-orders');
+const webProjectUploadsDir = path.join(process.cwd(), 'uploads/web-project-orders');
+if (!fs.existsSync(webProjectUploadsDir)) {
+  fs.mkdirSync(webProjectUploadsDir, { recursive: true });
+}
+
+const webUploadsDir = path.join(process.cwd(), 'uploads/web-orders');
 if (!fs.existsSync(webUploadsDir)) {
   fs.mkdirSync(webUploadsDir, { recursive: true });
 }
@@ -79,6 +85,54 @@ const fileFilter = (req: any, file: any, cb: any) => {
 
 const upload = multer({
   storage: multerStorage,
+  fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+    files: 5 // Maximum 5 files
+  }
+});
+
+// Configure multer for web project orders
+const webProjectStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, webProjectUploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename with timestamp and random string
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+    const fileExtension = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, fileExtension);
+    const cleanBaseName = baseName.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 50);
+    cb(null, `${cleanBaseName}-${uniqueSuffix}${fileExtension}`);
+  }
+});
+
+const webProjectUpload = multer({
+  storage: webProjectStorage,
+  fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+    files: 5 // Maximum 5 files
+  }
+});
+
+// Configure multer for web orders (Web & Platforms Development Service Wizard)
+const webOrderStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, webUploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename with timestamp and random string
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+    const fileExtension = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, fileExtension);
+    const cleanBaseName = baseName.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 50);
+    cb(null, `${cleanBaseName}-${uniqueSuffix}${fileExtension}`);
+  }
+});
+
+const webUpload = multer({
+  storage: webOrderStorage,
   fileFilter,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB max file size
@@ -481,29 +535,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Configure multer for web project orders
-  const webUpload = multer({
-    storage: multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, webUploadsDir);
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-        const fileExtension = path.extname(file.originalname);
-        const baseName = path.basename(file.originalname, fileExtension);
-        const cleanBaseName = baseName.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 50);
-        cb(null, `${cleanBaseName}-${uniqueSuffix}${fileExtension}`);
-      }
-    }),
-    fileFilter,
-    limits: {
-      fileSize: 10 * 1024 * 1024, // 10MB max file size
-      files: 5 // Maximum 5 files
-    }
-  });
 
   // Web Project Orders - Create new web project order  
-  app.post("/api/web-project-orders", webUpload.array('attachedFiles', 5), async (req, res) => {
+  app.post("/api/web-project-orders", webProjectUpload.array('attachedFiles', 5), async (req, res) => {
     try {
       let validatedData;
       
