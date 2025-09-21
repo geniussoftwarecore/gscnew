@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Clock, Smartphone, Shield, CheckCircle, Target, Palette, Globe, Plug, Store, Filter, Package, FileText, Settings, BookOpen, GraduationCap, BarChart3, Info, X, ChevronRight, Calendar, Code, Zap, HelpCircle, Layers, ShoppingCart, Users, Building, GraduationCapIcon, Upload, Check, ArrowRight, Send } from "lucide-react";
+import { ArrowLeft, Clock, Smartphone, Shield, CheckCircle, Target, Palette, Globe, Plug, Store, Filter, Package, FileText, Settings, BookOpen, GraduationCap, BarChart3, Info, X, ChevronRight, Calendar, Code, Zap, HelpCircle, Layers, ShoppingCart, Users, Building, GraduationCapIcon, Upload, Check, ArrowRight, Send, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -271,9 +271,226 @@ export default function ServiceDetailClean() {
   // Get project types and features
   const projectTypes = useWebProjectTypes();
   
-  // Use the web service categories and cards for non-web services
-  const categories = useWebCategories();
-  const appCards = useWebServiceCards();
+  // Web Development Categories - memoized to avoid re-creation on every render
+  const webCategories = useMemo(() => [
+    {
+      id: 'all',
+      name: lang === 'ar' ? 'جميع الفئات' : 'All Categories',
+      icon: Globe
+    },
+    {
+      id: 'frontend',
+      name: lang === 'ar' ? 'تطوير الواجهات الأمامية' : 'Frontend Development',
+      icon: Monitor
+    },
+    {
+      id: 'backend',
+      name: lang === 'ar' ? 'تطوير الخوادم' : 'Backend Development',
+      icon: Settings
+    },
+    {
+      id: 'fullstack',
+      name: lang === 'ar' ? 'التطوير الشامل' : 'Full-Stack Development',
+      icon: Layers
+    },
+    {
+      id: 'ecommerce',
+      name: lang === 'ar' ? 'المتاجر الإلكترونية' : 'E-commerce Platforms',
+      icon: ShoppingCart
+    },
+    {
+      id: 'enterprise',
+      name: lang === 'ar' ? 'الحلول المؤسسية' : 'Enterprise Solutions',
+      icon: Building
+    }
+  ], [lang]);
+
+  // Web Service Cards - memoized to avoid re-creation on every render
+  const webServiceCards = useMemo(() => [
+    {
+      id: 'react-spa',
+      category: 'frontend',
+      title: lang === 'ar' ? 'تطبيق ويب بـ React' : 'React Single Page Application',
+      shortDesc: lang === 'ar' ? 'تطبيق ويب تفاعلي سريع' : 'Fast interactive web application',
+      keyFeatures: lang === 'ar' ? [
+        'واجهة مستخدم حديثة وتفاعلية',
+        'أداء عالي مع React 18',
+        'إدارة حالة متقدمة',
+        'تجربة مستخدم سلسة'
+      ] : [
+        'Modern interactive user interface',
+        'High performance with React 18',
+        'Advanced state management',
+        'Smooth user experience'
+      ],
+      tag: lang === 'ar' ? 'شائع' : 'Popular',
+      longDesc: lang === 'ar' ? 'تطوير تطبيقات ويب أحادية الصفحة باستخدام React مع أفضل الممارسات الحديثة' : 'Develop single page applications using React with modern best practices',
+      stack: ['React', 'TypeScript', 'Vite', 'Tailwind CSS', 'React Query'],
+      integrations: ['REST APIs', 'GraphQL', 'Firebase', 'Supabase'],
+      timeline: [
+        { phase: lang === 'ar' ? 'التخطيط والتصميم' : 'Planning & Design', note: lang === 'ar' ? '3-5 أيام' : '3-5 days' },
+        { phase: lang === 'ar' ? 'التطوير الأساسي' : 'Core Development', note: lang === 'ar' ? '1-2 أسابيع' : '1-2 weeks' },
+        { phase: lang === 'ar' ? 'التكامل والاختبار' : 'Integration & Testing', note: lang === 'ar' ? '3-5 أيام' : '3-5 days' }
+      ],
+      pricingNote: lang === 'ar' ? 'يبدأ من 2500 ريال' : 'Starting from SAR 2,500',
+      faqs: [
+        {
+          q: lang === 'ar' ? 'ما هي مدة التطوير؟' : 'What is the development timeline?',
+          a: lang === 'ar' ? 'عادة 2-3 أسابيع حسب تعقيد المشروع' : 'Usually 2-3 weeks depending on project complexity'
+        },
+        {
+          q: lang === 'ar' ? 'هل يتضمن التصميم؟' : 'Does it include design?',
+          a: lang === 'ar' ? 'نعم، يتضمن تصميم واجهة المستخدم والتجربة' : 'Yes, includes UI/UX design'
+        }
+      ],
+      images: [],
+      ctaLink: '/contact'
+    },
+    {
+      id: 'nextjs-app',
+      category: 'fullstack',
+      title: lang === 'ar' ? 'تطبيق Next.js متكامل' : 'Full-Stack Next.js Application',
+      shortDesc: lang === 'ar' ? 'تطبيق ويب متكامل مع خادم' : 'Full-stack web application with server',
+      keyFeatures: lang === 'ar' ? [
+        'عرض من جانب الخادم (SSR)',
+        'تحسين محركات البحث',
+        'واجهات برمجة تطبيقات مدمجة',
+        'أداء فائق وتحميل سريع'
+      ] : [
+        'Server-side rendering (SSR)',
+        'SEO optimization',
+        'Built-in API routes',
+        'Superior performance and fast loading'
+      ],
+      tag: lang === 'ar' ? 'مُحسن لمحركات البحث' : 'SEO Optimized',
+      longDesc: lang === 'ar' ? 'تطوير تطبيقات ويب متكاملة باستخدام Next.js مع خادم مدمج وتحسين شامل لمحركات البحث' : 'Develop full-stack web applications using Next.js with integrated server and comprehensive SEO optimization',
+      stack: ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL', 'Tailwind CSS'],
+      integrations: ['Stripe', 'NextAuth.js', 'Vercel', 'AWS'],
+      timeline: [
+        { phase: lang === 'ar' ? 'التخطيط المعماري' : 'Architecture Planning', note: lang === 'ar' ? '5-7 أيام' : '5-7 days' },
+        { phase: lang === 'ar' ? 'تطوير الواجهة والخادم' : 'Frontend & Backend Development', note: lang === 'ar' ? '2-3 أسابيع' : '2-3 weeks' },
+        { phase: lang === 'ar' ? 'التحسين والنشر' : 'Optimization & Deployment', note: lang === 'ar' ? '3-5 أيام' : '3-5 days' }
+      ],
+      pricingNote: lang === 'ar' ? 'يبدأ من 4500 ريال' : 'Starting from SAR 4,500',
+      faqs: [
+        {
+          q: lang === 'ar' ? 'ما الفرق بين Next.js و React؟' : 'What\'s the difference between Next.js and React?',
+          a: lang === 'ar' ? 'Next.js يوفر ميزات إضافية مثل SSR وتحسين محركات البحث' : 'Next.js provides additional features like SSR and SEO optimization'
+        }
+      ],
+      images: [],
+      ctaLink: '/contact'
+    },
+    {
+      id: 'nodejs-api',
+      category: 'backend',
+      title: lang === 'ar' ? 'خادم Node.js احترافي' : 'Professional Node.js Server',
+      shortDesc: lang === 'ar' ? 'واجهات برمجة تطبيقات قوية وآمنة' : 'Powerful and secure APIs',
+      keyFeatures: lang === 'ar' ? [
+        'واجهات REST و GraphQL',
+        'نظام مصادقة متقدم',
+        'قواعد بيانات محسنة',
+        'مراقبة وتتبع الأداء'
+      ] : [
+        'REST & GraphQL APIs',
+        'Advanced authentication system',
+        'Optimized databases',
+        'Performance monitoring & tracking'
+      ],
+      tag: lang === 'ar' ? 'مقاوم للأحمال' : 'Scalable',
+      longDesc: lang === 'ar' ? 'تطوير خوادم Node.js قوية مع أفضل الممارسات في الأمان والأداء' : 'Develop powerful Node.js servers with best practices in security and performance',
+      stack: ['Node.js', 'Express', 'TypeScript', 'PostgreSQL', 'Redis'],
+      integrations: ['JWT Auth', 'Swagger', 'Docker', 'PM2'],
+      timeline: [
+        { phase: lang === 'ar' ? 'تصميم قاعدة البيانات' : 'Database Design', note: lang === 'ar' ? '2-3 أيام' : '2-3 days' },
+        { phase: lang === 'ar' ? 'تطوير واجهات البرمجة' : 'API Development', note: lang === 'ar' ? '1-2 أسابيع' : '1-2 weeks' },
+        { phase: lang === 'ar' ? 'الاختبار والتوثيق' : 'Testing & Documentation', note: lang === 'ar' ? '3-5 أيام' : '3-5 days' }
+      ],
+      pricingNote: lang === 'ar' ? 'يبدأ من 3500 ريال' : 'Starting from SAR 3,500',
+      faqs: [
+        {
+          q: lang === 'ar' ? 'هل يدعم قواعد البيانات المتعددة؟' : 'Does it support multiple databases?',
+          a: lang === 'ar' ? 'نعم، نتعامل مع PostgreSQL و MongoDB و MySQL' : 'Yes, we work with PostgreSQL, MongoDB, and MySQL'
+        }
+      ],
+      images: [],
+      ctaLink: '/contact'
+    },
+    {
+      id: 'ecommerce-platform',
+      category: 'ecommerce',
+      title: lang === 'ar' ? 'منصة تجارة إلكترونية' : 'E-commerce Platform',
+      shortDesc: lang === 'ar' ? 'متجر إلكتروني متكامل' : 'Complete online store solution',
+      keyFeatures: lang === 'ar' ? [
+        'إدارة المنتجات والمخزون',
+        'بوابات دفع متعددة',
+        'لوحة تحكم المدير',
+        'تقارير المبيعات المتقدمة'
+      ] : [
+        'Product & inventory management',
+        'Multiple payment gateways',
+        'Admin dashboard',
+        'Advanced sales reports'
+      ],
+      tag: lang === 'ar' ? 'حل شامل' : 'Complete Solution',
+      longDesc: lang === 'ar' ? 'منصة تجارة إلكترونية شاملة مع جميع الميزات المطلوبة لإدارة متجر ناجح' : 'Comprehensive e-commerce platform with all features needed to manage a successful store',
+      stack: ['Next.js', 'Stripe', 'PostgreSQL', 'Redis', 'TypeScript'],
+      integrations: ['Payment Gateways', 'Shipping APIs', 'Analytics', 'Email Marketing'],
+      timeline: [
+        { phase: lang === 'ar' ? 'تحليل المتطلبات' : 'Requirements Analysis', note: lang === 'ar' ? '5-7 أيام' : '5-7 days' },
+        { phase: lang === 'ar' ? 'التطوير الأساسي' : 'Core Development', note: lang === 'ar' ? '3-4 أسابيع' : '3-4 weeks' },
+        { phase: lang === 'ar' ? 'التكامل والاختبار' : 'Integration & Testing', note: lang === 'ar' ? '1 أسبوع' : '1 week' }
+      ],
+      pricingNote: lang === 'ar' ? 'يبدأ من 8500 ريال' : 'Starting from SAR 8,500',
+      faqs: [
+        {
+          q: lang === 'ar' ? 'هل يتضمن نظام إدارة المحتوى؟' : 'Does it include a content management system?',
+          a: lang === 'ar' ? 'نعم، مع لوحة تحكم شاملة وسهلة الاستخدام' : 'Yes, with a comprehensive and user-friendly admin panel'
+        }
+      ],
+      images: [],
+      ctaLink: '/contact'
+    },
+    {
+      id: 'enterprise-system',
+      category: 'enterprise',
+      title: lang === 'ar' ? 'نظام مؤسسي متقدم' : 'Advanced Enterprise System',
+      shortDesc: lang === 'ar' ? 'حلول مؤسسية قابلة للتوسع' : 'Scalable enterprise solutions',
+      keyFeatures: lang === 'ar' ? [
+        'معمارية موزعة ومقاومة للأحمال',
+        'نظام صلاحيات متقدم',
+        'تكامل مع الأنظمة الخارجية',
+        'مراقبة وتحليلات الأداء'
+      ] : [
+        'Distributed and scalable architecture',
+        'Advanced permission system',
+        'External system integration',
+        'Performance monitoring & analytics'
+      ],
+      tag: lang === 'ar' ? 'مؤسسي' : 'Enterprise',
+      longDesc: lang === 'ar' ? 'أنظمة مؤسسية متقدمة مصممة للتعامل مع الأحمال العالية والمتطلبات المعقدة' : 'Advanced enterprise systems designed to handle high loads and complex requirements',
+      stack: ['Node.js', 'Microservices', 'Docker', 'Kubernetes', 'PostgreSQL'],
+      integrations: ['ERP Systems', 'CRM', 'Business Intelligence', 'Cloud Services'],
+      timeline: [
+        { phase: lang === 'ar' ? 'التحليل والتخطيط' : 'Analysis & Planning', note: lang === 'ar' ? '1-2 أسابيع' : '1-2 weeks' },
+        { phase: lang === 'ar' ? 'التطوير التدريجي' : 'Iterative Development', note: lang === 'ar' ? '6-12 أسبوع' : '6-12 weeks' },
+        { phase: lang === 'ar' ? 'النشر والصيانة' : 'Deployment & Maintenance', note: lang === 'ar' ? 'مستمر' : 'Ongoing' }
+      ],
+      pricingNote: lang === 'ar' ? 'حسب المتطلبات' : 'Custom pricing',
+      faqs: [
+        {
+          q: lang === 'ar' ? 'هل يدعم التكامل مع الأنظمة الموجودة؟' : 'Does it support integration with existing systems?',
+          a: lang === 'ar' ? 'نعم، نوفر حلول تكامل شاملة مع جميع الأنظمة' : 'Yes, we provide comprehensive integration solutions with all systems'
+        }
+      ],
+      images: [],
+      ctaLink: '/contact'
+    }
+  ], [lang]);
+
+  // Use the web service categories and cards
+  const categories = webCategories;
+  const appCards = webServiceCards;
 
   // Web Development Features
   const getWebFeatures = () => [
