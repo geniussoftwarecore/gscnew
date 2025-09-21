@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+/* Import local Cairo fonts from @fontsource */
+@import "@fontsource/cairo/300.css";
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/600.css";
+@import "@fontsource/cairo/700.css";
 
 @tailwind base;
 @tailwind components;

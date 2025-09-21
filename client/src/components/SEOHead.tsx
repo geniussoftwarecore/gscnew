@@ -85,7 +85,7 @@ export function SEOHead({
       
       {/* Preload Critical Resources */}
       <link rel="preload" href="/brand/logo-gsc-hero.png" as="image" />
-      <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" as="style" />
+      {/* Local fonts are now handled in CSS */}
       
       {/* Prevent any unwanted styling or scripts injection */}
       <style type="text/css">
