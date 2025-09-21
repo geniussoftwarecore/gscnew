@@ -565,7 +565,7 @@ export default function ServiceDetailClean() {
                       data-testid={`icon-${index === 0 ? 'websites' : index === 1 ? 'platforms' : 'ecommerce'}`}
                     >
                       <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-hover:bg-primary/20 dark:bg-primary/20 dark:group-hover:bg-primary/30">
-                        <Icon className="w-8 h-8 text-primary transition-colors duration-300 group-hover:text-primary-dark" />
+                        <Icon className="w-8 h-8 text-primary transition-colors duration-300 group-hover:text-primary" />
                       </div>
                       <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         {label}
