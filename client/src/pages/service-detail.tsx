@@ -24,7 +24,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { useLanguage } from "@/i18n/lang";
 import { useTranslation } from "@/hooks/useTranslation";
 import { cn } from "@/lib/utils";
-import React, { useMemo, useState, useEffect, lazy, Suspense, useCallback } from "react";
+import React, { useMemo, useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
 import ConsolidatedERPNextV15Section from "@/components/erpnext/ConsolidatedERPNextV15Section";
 import MobileAppPlanningSystem from "@/components/services/MobileAppPlanningSystem";
 import { projectRequestSchema, type ProjectRequestFormData } from "@shared/schema";
@@ -782,6 +782,7 @@ const ProjectRequestWizard: React.FC<ProjectRequestWizardProps> = ({ serviceId }
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProjectRequestFormData>({
     resolver: zodResolver(projectRequestSchema),
@@ -922,7 +923,47 @@ ${requestData.domain ? `${lang === 'ar' ? 'النطاق:' : 'Domain:'} ${encodeU
     }
   });
 
+  // Step validation
+  const validateCurrentStep = () => {
+    const formValues = form.getValues();
+    
+    switch (currentStep) {
+      case 1:
+        // Step 1: Category and build type are required
+        // If category is "other", categoryOtherNote is also required
+        const categoryValid = formValues.category && formValues.buildKind;
+        const otherNoteValid = formValues.category !== "other" || (formValues.categoryOtherNote && formValues.categoryOtherNote.trim().length > 0);
+        return categoryValid && otherNoteValid;
+      case 2:
+        // Step 2: At least one feature must be selected
+        return formValues.features && formValues.features.length > 0;
+      case 3:
+        // Step 3: Idea summary is required (minimum 20 characters)
+        return formValues.ideaSummary && formValues.ideaSummary.length >= 20;
+      case 4:
+        // Step 4: Review step - all previous validations should pass
+        const step1Valid = formValues.category && formValues.buildKind && 
+                          (formValues.category !== "other" || (formValues.categoryOtherNote && formValues.categoryOtherNote.trim().length > 0));
+        const step2Valid = formValues.features && formValues.features.length > 0;
+        const step3Valid = formValues.ideaSummary && formValues.ideaSummary.length >= 20;
+        return step1Valid && step2Valid && step3Valid;
+      default:
+        return false;
+    }
+  };
+
   const handleNext = () => {
+    if (!validateCurrentStep()) {
+      // Trigger form validation to show errors
+      form.trigger();
+      toast({
+        title: lang === 'ar' ? "يرجى إكمال الحقول المطلوبة" : "Please complete required fields",
+        description: lang === 'ar' ? "تأكد من ملء جميع الحقول المطلوبة قبل المتابعة" : "Make sure to fill all required fields before proceeding",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (currentStep < 4) setCurrentStep(currentStep + 1);
   };
 
@@ -1258,15 +1299,35 @@ ${requestData.domain ? `${lang === 'ar' ? 'النطاق:' : 'Domain:'} ${encodeU
                       {lang === 'ar' ? 'PNG, JPG, PDF, DOC, ZIP (حد أقصى 10 ميجابايت)' : 'PNG, JPG, PDF, DOC, ZIP (Max 10MB)'}
                     </p>
                     <Input
+                      ref={fileInputRef}
                       type="file"
                       multiple
-                      accept=".png,.jpg,.jpeg,.pdf,.doc,.docx,.zip"
+                      accept=".png,.jpg,.jpeg,.gif,.webp,.pdf,.doc,.docx,.txt,.zip"
                       className="mt-2"
                       data-testid="input-file-attachments"
                       onChange={(e) => {
                         const files = Array.from(e.target.files || []);
                         const maxFileSize = 10 * 1024 * 1024; // 10MB
-                        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'];
+                        const maxFiles = 5;
+                        const allowedTypes = [
+                          'image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp',
+                          'application/pdf',
+                          'application/msword', 
+                          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                          'text/plain',
+                          'application/zip'
+                        ];
+                        
+                        // Check file count limit
+                        const currentAttachments = form.getValues("attachments") || [];
+                        if (currentAttachments.length + files.length > maxFiles) {
+                          toast({
+                            title: lang === 'ar' ? "تجاوز عدد الملفات المسموح" : "Too many files",
+                            description: lang === 'ar' ? `الحد الأقصى ${maxFiles} ملفات` : `Maximum ${maxFiles} files allowed`,
+                            variant: "destructive"
+                          });
+                          return;
+                        }
                         
                         // Validate files
                         const validFiles = files.filter(file => {
@@ -1289,14 +1350,20 @@ ${requestData.domain ? `${lang === 'ar' ? 'النطاق:' : 'Domain:'} ${encodeU
                           return true;
                         });
                         
-                        const attachments = validFiles.map(file => ({
+                        const newAttachments = validFiles.map(file => ({
                           fileName: file.name,
                           size: file.size,
                           mime: file.type,
                           tempUrl: URL.createObjectURL(file)
                         }));
                         
-                        form.setValue("attachments", attachments);
+                        // Append to existing attachments
+                        form.setValue("attachments", [...currentAttachments, ...newAttachments]);
+                        
+                        // Clear the input for potential re-upload
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = '';
+                        }
                       }}
                     />
                   </div>
@@ -1422,6 +1489,7 @@ ${requestData.domain ? `${lang === 'ar' ? 'النطاق:' : 'Domain:'} ${encodeU
                   <Button
                     type="button"
                     onClick={handleNext}
+                    disabled={!validateCurrentStep()}
                     data-testid="button-wizard-next"
                   >
                     {lang === 'ar' ? 'التالي' : 'Next'}
@@ -1430,12 +1498,12 @@ ${requestData.domain ? `${lang === 'ar' ? 'النطاق:' : 'Domain:'} ${encodeU
                 ) : (
                   <Button
                     type="submit"
-                    disabled={submitMutation.isPending}
+                    disabled={submitMutation.isPending || !validateCurrentStep()}
                     data-testid="button-wizard-submit"
                   >
                     {submitMutation.isPending ? (
                       <>
-                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" data-testid="loading-spinner" />
                         {lang === 'ar' ? 'جاري الإرسال...' : 'Submitting...'}
                       </>
                     ) : (
