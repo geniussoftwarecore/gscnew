@@ -1,7 +1,7 @@
 import { InsertServiceSubcategory } from "@shared/schema";
 
 export const serviceSubcategoriesData: InsertServiceSubcategory[] = [
-  // تطوير تطبيقات الهواتف الذكية - Mobile App Development
+  // تطوير تطبيقات الموبايل - Mobile App Development
   {
     serviceId: "66b131cc-ccec-49a7-b832-972f4ba29a7b", // مطابق لمعرف خدمة التطبيقات في البيانات الموجودة
     subcategoryId: "mobile-ecommerce",

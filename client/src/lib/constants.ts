@@ -1,7 +1,7 @@
 export const SERVICES = [
   {
     id: 'mobile',
-    title: 'تطبيقات الهواتف الذكية',
+    title: 'تطبيقات الموبايل',
     description: 'نطور تطبيقات احترافية وسريعة الاستجابة لأنظمة iOS و Android بأحدث التقنيات والمعايير العالمية مع واجهات مستخدم حديثة وتجربة استخدام مميزة',
     icon: 'fas fa-mobile-alt',
     category: 'mobile',
@@ -69,7 +69,7 @@ export const SERVICES = [
 
 export const PORTFOLIO_CATEGORIES = [
   { id: 'all', name: 'جميع المشاريع' },
-  { id: 'mobile', name: 'تطبيقات الهواتف' },
+  { id: 'mobile', name: 'تطبيقات الموبايل' },
   { id: 'web', name: 'مواقع الإنترنت' },
   { id: 'design', name: 'تصميم جرافيكي' },
   { id: 'erp', name: 'أنظمة ERP' },

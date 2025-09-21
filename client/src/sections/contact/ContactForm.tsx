@@ -63,7 +63,7 @@ export function ContactForm() {
       
       // Check if this is an app name or main service
       const mainServices = [
-        "تطوير تطبيقات الهواتف الذكية",
+        "تطوير تطبيقات الموبايل",
         "تطوير المواقع والمنصات", 
         "تطوير تطبيقات سطح المكتب",
         "الحلول الذكية والبرمجية للهواتف الذكية",
@@ -125,7 +125,7 @@ export function ContactForm() {
         });
       } else {
         // It's an app - set a default service and the specific app
-        const defaultService = "تطوير تطبيقات الهواتف الذكية";
+        const defaultService = "تطوير تطبيقات الموبايل";
         setSelectedService(defaultService);
         setValue("service", defaultService);
         setSelectedApp(decodedService);
@@ -241,7 +241,7 @@ export function ContactForm() {
 
   // Main services only (apps will appear in separate field)
   const services = [
-    "تطوير تطبيقات الهواتف الذكية",
+    "تطوير تطبيقات الموبايل",
     "تطوير المواقع والمنصات", 
     "تطوير تطبيقات سطح المكتب",
     "الحلول الذكية والبرمجية للهواتف الذكية",
@@ -271,7 +271,7 @@ export function ContactForm() {
 
   // Service applications mapping
   const serviceApplications: Record<string, string[]> = {
-    "تطوير تطبيقات الهواتف الذكية": [
+    "تطوير تطبيقات الموبايل": [
       dir === 'rtl' ? "تطبيق تجاري للمتاجر الإلكترونية" : "E-commerce Mobile App",
       dir === 'rtl' ? "تطبيق إدارة المخزون والمستودعات" : "Inventory Management App",
       dir === 'rtl' ? "تطبيق خدمات التوصيل والشحن" : "Delivery & Shipping App",

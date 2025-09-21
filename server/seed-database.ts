@@ -77,7 +77,7 @@ export async function seedDatabase() {
     // Seed services
     const seededServices = await db.insert(services).values([
       {
-        title: "تطوير تطبيقات الهواتف الذكية",
+        title: "تطوير تطبيقات الموبايل",
         description: "نطور تطبيقات احترافية وسريعة الاستجابة لأنظمة iOS و Android بأحدث التقنيات والمعايير العالمية مع واجهات مستخدم حديثة وتجربة استخدام مميزة",
         icon: "smartphone",
         category: "mobile",
