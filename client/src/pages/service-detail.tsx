@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import React, { useMemo, useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
 import ConsolidatedERPNextV15Section from "@/components/erpnext/ConsolidatedERPNextV15Section";
 import MobileAppPlanningSystem from "@/components/services/MobileAppPlanningSystem";
+import WebDevelopmentServicePage from "@/pages/services/web-development";
 import { projectRequestSchema, type ProjectRequestFormData } from "@shared/schema";
 
 // Service interface
@@ -239,6 +240,9 @@ export default function ServiceDetailClean() {
   const [, setLocation] = useLocation();
   const { lang, dir } = useLanguage();
   const { t } = useTranslation();
+  
+  // Check if this is the web development service - return early but after initial hooks
+  const isWebDevelopmentService = id === '562fce34-abbd-4ba9-abc5-bc6b4afe61c7';
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAppDetails, setSelectedAppDetails] = useState<AppCard | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -1457,91 +1461,9 @@ export default function ServiceDetailClean() {
     );
   }
 
-  // Check if this is the web development service
-  const isWebDevelopmentService = id === '3772c096-88ef-475a-a8a4-e305adfcd798';
-
-  // If it's the web development service, show the planning wizard
+  // Conditional return for web development service
   if (isWebDevelopmentService) {
-    return (
-      <>
-        <SEOHead
-          title={`${service?.title || 'تطوير المواقع والمنصات'} - ${lang === 'ar' ? 'جينيوس سوفتوير' : 'Genius Software'}`}
-          description={service?.description || 'نطور مواقع ومنصات رقمية احترافية'}
-        />
-        
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800" dir={dir}>
-          {/* Back Button */}
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Button 
-                variant="ghost" 
-                onClick={() => setLocation('/services')}
-                className="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-              >
-                <ArrowLeft className={cn("w-4 h-4 mr-2", dir === 'rtl' && "rotate-180 mr-0 ml-2")} />
-                {lang === 'ar' ? 'العودة للخدمات' : 'Back to Services'}
-              </Button>
-            </motion.div>
-          </div>
-
-          {/* Service Header with Icons */}
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-12"
-            >
-              <div className="flex justify-center items-center gap-6 mb-6">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.1 }}
-                  className="p-4 bg-blue-100 dark:bg-blue-900 rounded-full"
-                >
-                  <Globe className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                  className="p-4 bg-purple-100 dark:bg-purple-900 rounded-full"
-                >
-                  <Layers className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.3 }}
-                  className="p-4 bg-green-100 dark:bg-green-900 rounded-full"
-                >
-                  <ShoppingCart className="w-8 h-8 text-green-600 dark:text-green-400" />
-                </motion.div>
-              </div>
-              
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                {lang === 'ar' ? 'تطوير المواقع والمنصات' : 'Web & Platform Development'}
-              </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                {lang === 'ar' 
-                  ? 'خطط مشروعك التقني معنا من خلال معالج التخطيط التفاعلي'
-                  : 'Plan your technical project with us through our interactive planning wizard'
-                }
-              </p>
-            </motion.div>
-
-            {/* Planning Wizard */}
-            <div className="max-w-4xl mx-auto">
-              {renderPlanningWizard()}
-            </div>
-          </div>
-        </div>
-      </>
-    );
+    return <WebDevelopmentServicePage />;
   }
 
   // If not mobile app service and not web development service, show the ERPNext section or basic service view
