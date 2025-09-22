@@ -8,7 +8,8 @@ import {
   contacts,
   accounts,
   opportunities,
-  serviceSubcategories
+  serviceSubcategories,
+  graphicsDesignRequests
 } from "@shared/schema";
 import { serviceSubcategoriesData } from "./service-subcategories-data";
 import bcrypt from "bcrypt";

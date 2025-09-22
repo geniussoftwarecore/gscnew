@@ -37,6 +37,32 @@ export const contactSubmissions = pgTable("contact_submissions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const graphicsDesignRequests = pgTable("graphics_design_requests", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone").notNull(),
+  company: text("company"),
+  selectedPackage: text("selected_package").notNull(),
+  selectedFeatures: jsonb("selected_features").$type<string[]>(),
+  projectDescription: text("project_description").notNull(),
+  budget: text("budget"),
+  timeline: text("timeline"),
+  additionalRequirements: text("additional_requirements"),
+  attachments: jsonb("attachments").$type<string[]>(),
+  status: text("status").notNull().default("pending"), // pending, in_progress, completed, cancelled
+  assignedTo: varchar("assigned_to"),
+  estimatedCost: text("estimated_cost"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  statusIdx: index("graphics_design_requests_status_idx").on(table.status),
+  createdAtIdx: index("graphics_design_requests_created_at_idx").on(table.createdAt),
+  customerEmailIdx: index("graphics_design_requests_customer_email_idx").on(table.customerEmail),
+  assignedToIdx: index("graphics_design_requests_assigned_to_idx").on(table.assignedTo),
+}));
+
 export const portfolioItems = pgTable("portfolio_items", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   slug: text("slug").notNull().unique(),
@@ -523,6 +549,12 @@ export const insertContactSubmissionSchema = createInsertSchema(contactSubmissio
   createdAt: true,
 });
 
+export const insertGraphicsDesignRequestSchema = createInsertSchema(graphicsDesignRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertPortfolioItemSchema = createInsertSchema(portfolioItems).omit({
   id: true,
   createdAt: true,
@@ -688,6 +720,9 @@ export type User = typeof users.$inferSelect;
 
 export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+
+export type InsertGraphicsDesignRequest = z.infer<typeof insertGraphicsDesignRequestSchema>;
+export type GraphicsDesignRequest = typeof graphicsDesignRequests.$inferSelect;
 
 export type InsertPortfolioItem = z.infer<typeof insertPortfolioItemSchema>;
 export type PortfolioItem = typeof portfolioItems.$inferSelect;

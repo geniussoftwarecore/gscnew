@@ -44,6 +44,10 @@ import {
   type InsertWebProjectOrder,
   type WebOrder,
   type InsertWebOrder,
+  type DesktopOrder,
+  type InsertDesktopOrder,
+  type GraphicsDesignRequest,
+  type InsertGraphicsDesignRequest,
   users,
   contactSubmissions,
   portfolioItems,
@@ -66,7 +70,9 @@ import {
   serviceAuditLog,
   mobileAppOrders,
   webProjectOrders,
-  webOrders
+  webOrders,
+  desktopOrders,
+  graphicsDesignRequests
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql } from "drizzle-orm";
@@ -95,7 +101,7 @@ export class DatabaseStorage implements IStorage {
     ipAddress?: string,
     userAgent?: string,
     // إضافة معامل المعاملة - Add transaction parameter
-    tx?: any
+    tx?: typeof db
   ): Promise<void> {
     const dbInstance = tx || db;
     if (!dbInstance) return;
@@ -1091,30 +1097,6 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount > 0;
   }
 
-  // Mobile App Orders
-  async createMobileAppOrder(order: InsertMobileAppOrder): Promise<MobileAppOrder> {
-    if (!db) throw new Error("Database not available");
-    const result = await db.insert(mobileAppOrders).values(order).returning();
-    return result[0];
-  }
-
-  async getAllMobileAppOrders(): Promise<MobileAppOrder[]> {
-    if (!db) throw new Error("Database not available");
-    return await db.select().from(mobileAppOrders).orderBy(desc(mobileAppOrders.createdAt));
-  }
-
-  // Web Project Orders
-  async createWebProjectOrder(order: InsertWebProjectOrder): Promise<WebProjectOrder> {
-    if (!db) throw new Error("Database not available");
-    const result = await db.insert(webProjectOrders).values(order).returning();
-    return result[0];
-  }
-
-  async getAllWebProjectOrders(): Promise<WebProjectOrder[]> {
-    if (!db) throw new Error("Database not available");
-    return await db.select().from(webProjectOrders).orderBy(desc(webProjectOrders.createdAt));
-  }
-
   // Web Orders (for Web & Platforms Development Service Wizard)
   async createWebOrder(order: InsertWebOrder): Promise<WebOrder> {
     if (!db) throw new Error("Database not available");
@@ -1125,5 +1107,29 @@ export class DatabaseStorage implements IStorage {
   async getAllWebOrders(): Promise<WebOrder[]> {
     if (!db) throw new Error("Database not available");
     return await db.select().from(webOrders).orderBy(desc(webOrders.createdAt));
+  }
+
+  // Desktop Orders
+  async createDesktopOrder(order: InsertDesktopOrder): Promise<DesktopOrder> {
+    if (!db) throw new Error("Database not available");
+    const result = await db.insert(desktopOrders).values(order).returning();
+    return result[0];
+  }
+
+  async getAllDesktopOrders(): Promise<DesktopOrder[]> {
+    if (!db) throw new Error("Database not available");
+    return await db.select().from(desktopOrders).orderBy(desc(desktopOrders.createdAt));
+  }
+
+  // Graphics Design Requests
+  async createGraphicsDesignRequest(request: InsertGraphicsDesignRequest): Promise<GraphicsDesignRequest> {
+    if (!db) throw new Error("Database not available");
+    const result = await db.insert(graphicsDesignRequests).values(request).returning();
+    return result[0];
+  }
+
+  async getGraphicsDesignRequests(): Promise<GraphicsDesignRequest[]> {
+    if (!db) throw new Error("Database not available");
+    return await db.select().from(graphicsDesignRequests).orderBy(desc(graphicsDesignRequests.createdAt));
   }
 }

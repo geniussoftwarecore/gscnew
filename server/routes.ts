@@ -30,7 +30,8 @@ import {
   insertMobileAppOrderSchema,
   insertWebProjectOrderSchema,
   insertWebOrderSchema,
-  insertDesktopOrderSchema
+  insertDesktopOrderSchema,
+  insertGraphicsDesignRequestSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { createObjectCsvWriter } from 'csv-writer';
@@ -55,6 +56,11 @@ if (!fs.existsSync(webUploadsDir)) {
 const desktopUploadsDir = path.join(process.cwd(), 'uploads/desktop-orders');
 if (!fs.existsSync(desktopUploadsDir)) {
   fs.mkdirSync(desktopUploadsDir, { recursive: true });
+}
+
+const graphicsDesignUploadsDir = path.join(process.cwd(), 'uploads/graphics-design-orders');
+if (!fs.existsSync(graphicsDesignUploadsDir)) {
+  fs.mkdirSync(graphicsDesignUploadsDir, { recursive: true });
 }
 
 // Configure multer for mobile app orders
@@ -163,6 +169,29 @@ const desktopOrderStorage = multer.diskStorage({
 
 const desktopUpload = multer({
   storage: desktopOrderStorage,
+  fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+    files: 5 // Maximum 5 files
+  }
+});
+
+// Configure multer for graphics design orders
+const graphicsDesignStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, graphicsDesignUploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+    const fileExtension = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, fileExtension);
+    const cleanBaseName = baseName.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 50);
+    cb(null, `${cleanBaseName}-${uniqueSuffix}${fileExtension}`);
+  }
+});
+
+const uploadGraphicsDesign = multer({
+  storage: graphicsDesignStorage,
   fileFilter,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB max file size
@@ -894,6 +923,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: "Internal server error" 
         });
       }
+    }
+  });
+
+  // Graphics Design Orders - Create new graphics design request
+  app.post("/api/graphics-design-orders", uploadGraphicsDesign.array('attachments', 5), async (req, res) => {
+    try {
+      let validatedData;
+      
+      // Handle both FormData (with files) and regular JSON data
+      if (req.is('multipart/form-data')) {
+        // Extract form data and files
+        const formData = req.body;
+        const files = req.files as Express.Multer.File[];
+        
+        // Parse selectedFeatures from JSON string to array
+        let selectedFeatures: string[] = [];
+        if (formData.selectedFeatures) {
+          try {
+            selectedFeatures = JSON.parse(formData.selectedFeatures);
+          } catch (parseError) {
+            return res.status(400).json({
+              success: false,
+              message: "Invalid selectedFeatures format. Must be valid JSON array."
+            });
+          }
+        }
+        
+        // Process uploaded files
+        const attachments = files?.map(file => file.filename) || [];
+        
+        // Prepare data for validation
+        const requestData = {
+          ...formData,
+          selectedFeatures,
+          attachments
+        };
+        
+        // Validate with Zod schema
+        validatedData = insertGraphicsDesignRequestSchema.parse(requestData);
+        
+      } else {
+        // Regular JSON data
+        validatedData = insertGraphicsDesignRequestSchema.parse(req.body);
+      }
+        
+      // Create the graphics design request
+      const request = await storage.instance.createGraphicsDesignRequest(validatedData);
+      
+      res.json({ 
+        success: true, 
+        data: request,
+        message: "Graphics design request created successfully"
+      });
+    } catch (error) {
+      // Clean up uploaded files on error
+      if (req.files) {
+        const files = req.files as Express.Multer.File[];
+        files.forEach(file => {
+          fs.unlink(file.path, (unlinkError) => {
+            if (unlinkError) console.error('Failed to delete uploaded file:', unlinkError);
+          });
+        });
+      }
+      
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      } else if (error instanceof multer.MulterError) {
+        if (error.code === 'LIMIT_FILE_SIZE') {
+          res.status(400).json({
+            success: false,
+            message: "File too large. Maximum size is 10MB per file."
+          });
+        } else if (error.code === 'LIMIT_FILE_COUNT') {
+          res.status(400).json({
+            success: false,
+            message: "Too many files. Maximum 5 files allowed."
+          });
+        } else {
+          res.status(400).json({
+            success: false,
+            message: `File upload error: ${error.message}`
+          });
+        }
+      } else {
+        console.error('Graphics design request creation error:', error);
+        res.status(500).json({ 
+          success: false, 
+          message: "Internal server error" 
+        });
+      }
+    }
+  });
+
+  // Get graphics design requests
+  app.get("/api/graphics-design-orders", requireAuth, async (req, res) => {
+    try {
+      const requests = await storage.instance.getGraphicsDesignRequests();
+      res.json({ 
+        success: true, 
+        data: requests 
+      });
+    } catch (error) {
+      console.error('Graphics design requests fetch error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to fetch graphics design requests" 
+      });
     }
   });
 

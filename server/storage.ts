@@ -46,6 +46,8 @@ import {
   type InsertWebOrder,
   type DesktopOrder,
   type InsertDesktopOrder,
+  type GraphicsDesignRequest,
+  type InsertGraphicsDesignRequest,
   supportTickets,
   dealStages,
   ticketStatus
@@ -81,6 +83,10 @@ export interface IStorage {
   // Desktop Orders  
   createDesktopOrder(order: InsertDesktopOrder): Promise<DesktopOrder>;
   getAllDesktopOrders(): Promise<DesktopOrder[]>;
+  
+  // Graphics Design Requests
+  createGraphicsDesignRequest(request: InsertGraphicsDesignRequest): Promise<GraphicsDesignRequest>;
+  getGraphicsDesignRequests(): Promise<GraphicsDesignRequest[]>;
   
   // Portfolio Management
   getAllPortfolioItems(): Promise<PortfolioItem[]>;
@@ -303,6 +309,7 @@ export class MemStorage implements IStorage {
   private webProjectOrders: Map<string, WebProjectOrder>;
   private webOrders: Map<string, WebOrder>;
   private desktopOrders: Map<string, DesktopOrder>;
+  private graphicsDesignRequests: Map<string, GraphicsDesignRequest>;
 
   constructor() {
     this.users = new Map();
@@ -328,6 +335,7 @@ export class MemStorage implements IStorage {
     this.webProjectOrders = new Map();
     this.webOrders = new Map();
     this.desktopOrders = new Map();
+    this.graphicsDesignRequests = new Map();
     
     // Initialize with sample data
     this.initializeSampleData();
@@ -2581,5 +2589,24 @@ export class MemStorage implements IStorage {
 
   async getAllDesktopOrders(): Promise<DesktopOrder[]> {
     return Array.from(this.desktopOrders.values());
+  }
+
+  async createGraphicsDesignRequest(request: InsertGraphicsDesignRequest): Promise<GraphicsDesignRequest> {
+    const id = randomUUID();
+    const newRequest: GraphicsDesignRequest = {
+      ...request,
+      id,
+      attachments: request.attachments || [],
+      notes: request.notes || null,
+      assignee: request.assignee || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.graphicsDesignRequests.set(id, newRequest);
+    return newRequest;
+  }
+
+  async getGraphicsDesignRequests(): Promise<GraphicsDesignRequest[]> {
+    return Array.from(this.graphicsDesignRequests.values());
   }
 }
