@@ -29,7 +29,8 @@ import {
   insertSavedFilterSchema,
   insertMobileAppOrderSchema,
   insertWebProjectOrderSchema,
-  insertWebOrderSchema
+  insertWebOrderSchema,
+  insertDesktopOrderSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { createObjectCsvWriter } from 'csv-writer';
@@ -49,6 +50,11 @@ if (!fs.existsSync(webProjectUploadsDir)) {
 const webUploadsDir = path.join(process.cwd(), 'uploads/web-orders');
 if (!fs.existsSync(webUploadsDir)) {
   fs.mkdirSync(webUploadsDir, { recursive: true });
+}
+
+const desktopUploadsDir = path.join(process.cwd(), 'uploads/desktop-orders');
+if (!fs.existsSync(desktopUploadsDir)) {
+  fs.mkdirSync(desktopUploadsDir, { recursive: true });
 }
 
 // Configure multer for mobile app orders
@@ -133,6 +139,30 @@ const webOrderStorage = multer.diskStorage({
 
 const webUpload = multer({
   storage: webOrderStorage,
+  fileFilter,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+    files: 5 // Maximum 5 files
+  }
+});
+
+// Configure multer for desktop orders
+const desktopOrderStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, desktopUploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename with timestamp and random string
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+    const fileExtension = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, fileExtension);
+    const cleanBaseName = baseName.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 50);
+    cb(null, `${cleanBaseName}-${uniqueSuffix}${fileExtension}`);
+  }
+});
+
+const desktopUpload = multer({
+  storage: desktopOrderStorage,
   fileFilter,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB max file size
@@ -758,6 +788,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else {
         console.error('Web order creation error:', error);
+        res.status(500).json({ 
+          success: false, 
+          message: "Internal server error" 
+        });
+      }
+    }
+  });
+
+  // Desktop Orders - Create new desktop order
+  app.post("/api/desktop-orders", desktopUpload.array('attachments', 5), async (req, res) => {
+    try {
+      let validatedData;
+      
+      // Handle both FormData (with files) and regular JSON data
+      if (req.is('multipart/form-data')) {
+        // Extract form data and files
+        const formData = req.body;
+        const files = req.files as Express.Multer.File[];
+        
+        // Parse selectedFeatures from JSON string to array
+        let selectedFeatures: string[] = [];
+        if (formData.selectedFeatures) {
+          try {
+            selectedFeatures = JSON.parse(formData.selectedFeatures);
+          } catch (parseError) {
+            return res.status(400).json({
+              success: false,
+              message: "Invalid selectedFeatures format. Must be valid JSON array."
+            });
+          }
+        }
+        
+        // Process uploaded files
+        const attachments = files?.map(file => ({
+          id: Math.random().toString(36).substr(2, 9),
+          filename: file.filename,
+          originalName: file.originalname,
+          size: file.size,
+          mimeType: file.mimetype,
+          uploadedAt: new Date().toISOString()
+        })) || [];
+        
+        // Prepare data for validation
+        const requestData = {
+          ...formData,
+          selectedFeatures,
+          attachments
+        };
+        
+        // Validate with Zod schema
+        validatedData = insertDesktopOrderSchema.parse(requestData);
+        
+      } else {
+        // Regular JSON data
+        validatedData = insertDesktopOrderSchema.parse(req.body);
+      }
+        
+      // Create the desktop order
+      const order = await storage.instance.createDesktopOrder(validatedData);
+      
+      res.json({ 
+        success: true, 
+        data: order,
+        message: "Desktop order created successfully"
+      });
+    } catch (error) {
+      // Clean up uploaded files on error
+      if (req.files) {
+        const files = req.files as Express.Multer.File[];
+        files.forEach(file => {
+          fs.unlink(file.path, (unlinkError) => {
+            if (unlinkError) console.error('Failed to delete uploaded file:', unlinkError);
+          });
+        });
+      }
+      
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ 
+          success: false, 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      } else if (error instanceof multer.MulterError) {
+        if (error.code === 'LIMIT_FILE_SIZE') {
+          res.status(400).json({
+            success: false,
+            message: "File too large. Maximum size is 10MB per file."
+          });
+        } else if (error.code === 'LIMIT_FILE_COUNT') {
+          res.status(400).json({
+            success: false,
+            message: "Too many files. Maximum 5 files allowed."
+          });
+        } else {
+          res.status(400).json({
+            success: false,
+            message: `File upload error: ${error.message}`
+          });
+        }
+      } else {
+        console.error('Desktop order creation error:', error);
         res.status(500).json({ 
           success: false, 
           message: "Internal server error" 

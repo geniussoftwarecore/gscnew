@@ -978,3 +978,68 @@ export const insertWebOrderSchema = createInsertSchema(webOrders).omit({
 
 export type InsertWebOrder = z.infer<typeof insertWebOrderSchema>;
 export type WebOrder = typeof webOrders.$inferSelect;
+
+// Desktop App Orders Table
+export const desktopOrders = pgTable("desktop_orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  // Customer Information
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone"),
+  customerCompany: text("customer_company"),
+  
+  // App Details
+  appType: text("app_type").notNull(), // business, financial, education, design, productivity, media, games, analytics
+  projectName: text("project_name"), // Renamed from appName to match the frontend form
+  contentScope: text("content_scope"), // Renamed from appDescription to match the frontend form
+  targetAudience: text("target_audience"),
+  
+  // Selected Features (JSON array of feature IDs)
+  selectedFeatures: jsonb("selected_features").$type<string[]>().default(sql`'[]'::jsonb`),
+  
+  // Budget and Timeline
+  budget: text("budget"),
+  timeline: text("timeline"),
+  
+  // Additional Information
+  notes: text("notes"), // additional notes and requirements
+  
+  // File Attachments
+  attachments: jsonb("attachments").$type<Array<{
+    id: string;
+    filename: string;
+    originalName: string;
+    size: number;
+    mimeType: string;
+    uploadedAt: string;
+  }>>().default(sql`'[]'::jsonb`),
+  
+  // Order Status and Assignment
+  status: text("status").notNull().default("new"), // new, reviewed, in_progress, completed, cancelled
+  assignee: varchar("assignee").references(() => users.id), // assigned team member
+  
+  // Timestamps
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  // Indexes for performance
+  statusIdx: index("desktop_orders_status_idx").on(table.status),
+  appTypeIdx: index("desktop_orders_app_type_idx").on(table.appType),
+  customerEmailIdx: index("desktop_orders_customer_email_idx").on(table.customerEmail),
+  createdAtIdx: index("desktop_orders_created_at_idx").on(table.createdAt),
+  assigneeIdx: index("desktop_orders_assignee_idx").on(table.assignee),
+  
+  // Composite indexes for common queries
+  statusCreatedIdx: index("desktop_orders_status_created_idx").on(table.status, table.createdAt),
+  appTypeStatusIdx: index("desktop_orders_app_type_status_idx").on(table.appType, table.status),
+}));
+
+// Insert Schema for Desktop Orders
+export const insertDesktopOrderSchema = createInsertSchema(desktopOrders).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertDesktopOrder = z.infer<typeof insertDesktopOrderSchema>;
+export type DesktopOrder = typeof desktopOrders.$inferSelect;

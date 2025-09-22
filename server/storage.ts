@@ -44,6 +44,8 @@ import {
   type InsertWebProjectOrder,
   type WebOrder,
   type InsertWebOrder,
+  type DesktopOrder,
+  type InsertDesktopOrder,
   supportTickets,
   dealStages,
   ticketStatus
@@ -75,6 +77,10 @@ export interface IStorage {
   // Web Orders (for Web & Platforms Development Service Wizard)
   createWebOrder(order: InsertWebOrder): Promise<WebOrder>;
   getAllWebOrders(): Promise<WebOrder[]>;
+  
+  // Desktop Orders  
+  createDesktopOrder(order: InsertDesktopOrder): Promise<DesktopOrder>;
+  getAllDesktopOrders(): Promise<DesktopOrder[]>;
   
   // Portfolio Management
   getAllPortfolioItems(): Promise<PortfolioItem[]>;
@@ -296,6 +302,7 @@ export class MemStorage implements IStorage {
   private mobileAppOrders: Map<string, MobileAppOrder>;
   private webProjectOrders: Map<string, WebProjectOrder>;
   private webOrders: Map<string, WebOrder>;
+  private desktopOrders: Map<string, DesktopOrder>;
 
   constructor() {
     this.users = new Map();
@@ -320,6 +327,7 @@ export class MemStorage implements IStorage {
     this.mobileAppOrders = new Map();
     this.webProjectOrders = new Map();
     this.webOrders = new Map();
+    this.desktopOrders = new Map();
     
     // Initialize with sample data
     this.initializeSampleData();
@@ -2548,5 +2556,30 @@ export class MemStorage implements IStorage {
 
   async getAllWebOrders(): Promise<WebOrder[]> {
     return Array.from(this.webOrders.values());
+  }
+
+  async createDesktopOrder(order: InsertDesktopOrder): Promise<DesktopOrder> {
+    const id = randomUUID();
+    const newOrder: DesktopOrder = {
+      ...order,
+      id,
+      projectName: order.projectName || null,
+      contentScope: order.contentScope || null,
+      targetAudience: order.targetAudience || null,
+      selectedFeatures: order.selectedFeatures || [],
+      budget: order.budget || null,
+      timeline: order.timeline || null,
+      notes: order.notes || null,
+      attachments: order.attachments || [],
+      assignee: order.assignee || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.desktopOrders.set(id, newOrder);
+    return newOrder;
+  }
+
+  async getAllDesktopOrders(): Promise<DesktopOrder[]> {
+    return Array.from(this.desktopOrders.values());
   }
 }
