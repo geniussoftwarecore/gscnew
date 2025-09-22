@@ -24,7 +24,17 @@ import {
   FileImage,
   Briefcase,
   Heart,
-  Lightbulb
+  Lightbulb,
+  Crown,
+  Shield,
+  TrendingUp,
+  Globe,
+  Brush,
+  Scissors,
+  PaintBucket,
+  ImageIcon,
+  MonitorSpeaker,
+  Smartphone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,12 +78,25 @@ interface DesignPackage {
   title: string;
   description: string;
   price: string;
+  originalPrice?: string;
+  discount?: string;
   features: string[];
   deliverables: string[];
   timeline: string;
+  revisions?: string;
+  support?: string;
   tag?: string;
   popular?: boolean;
-  category: 'branding' | 'marketing' | 'digital' | 'print';
+  premium?: boolean;
+  category: 'branding' | 'marketing' | 'digital' | 'print' | 'comprehensive';
+  targetAudience?: string[];
+  technicalSpecs?: string[];
+  addOns?: {
+    id: string;
+    name: string;
+    price: string;
+    description: string;
+  }[];
 }
 
 // Feature categories
@@ -313,10 +336,16 @@ export default function GraphicsDesignService() {
         formData.append('attachments', file);
       });
 
-      return apiRequest('/api/graphics-design-orders', {
+      const response = await fetch('/api/graphics-design-orders', {
         method: 'POST',
         body: formData
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit request');
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -643,44 +672,135 @@ export default function GraphicsDesignService() {
               </AnimatePresence>
             </div>
 
-            {/* Custom Package CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="mt-12 text-center"
-            >
-              <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-                <CardContent className="p-8">
-                  <div className="flex flex-col items-center">
-                    <Lightbulb className="w-12 h-12 text-purple-600 mb-4" />
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {lang === 'ar' ? 'لديك متطلبات خاصة؟' : 'Have Special Requirements?'}
-                    </h3>
-                    <p className="text-gray-600 mb-6 max-w-md">
-                      {lang === 'ar' 
-                        ? 'نصمم باقة مخصصة تناسب احتياجاتك وميزانيتك بالضبط'
-                        : 'We design a custom package that exactly fits your needs and budget'
-                      }
-                    </p>
-                    <Button 
-                      size="lg"
-                      onClick={() => {
-                        setSelectedPackage(null);
-                        form.setValue('selectedPackage', 'custom');
-                        setShowQuoteModal(true);
-                      }}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                      data-testid="button-custom-package"
-                    >
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      {lang === 'ar' ? 'طلب باقة مخصصة' : 'Request Custom Package'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+            {/* Custom Package CTA and Why Choose Us */}
+            <div className="mt-16 space-y-12">
+              {/* Why Choose Us Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="bg-gradient-to-br from-slate-50 to-gray-100/50 rounded-3xl p-8 border border-gray-200"
+              >
+                <div className="text-center mb-10">
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                    {lang === 'ar' ? 'لماذا تختار GSC لتصميم هويتك البصرية؟' : 'Why Choose GSC for Your Visual Identity Design?'}
+                  </h3>
+                  <p className="text-gray-600 max-w-3xl mx-auto">
+                    {lang === 'ar' 
+                      ? 'نجمع بين الخبرة العميقة والإبداع الاستثنائي لنقدم حلولاً تصميمية تحقق أهدافك التجارية وتميز علامتك في السوق'
+                      : 'We combine deep expertise with exceptional creativity to deliver design solutions that achieve your business goals and distinguish your brand in the market'
+                    }
+                  </p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[
+                    {
+                      icon: Award,
+                      title: lang === 'ar' ? 'خبرة +7 سنوات' : '+7 Years Experience',
+                      description: lang === 'ar' ? 'فريق من المحترفين ذوي الخبرة الواسعة في التصميم' : 'Team of professionals with extensive design experience',
+                      color: 'from-blue-500 to-cyan-500'
+                    },
+                    {
+                      icon: Users,
+                      title: lang === 'ar' ? '+500 عميل راضي' : '+500 Satisfied Clients',
+                      description: lang === 'ar' ? 'سجل حافل من النجاحات والعملاء المميزين' : 'Impressive track record of successes and distinguished clients',
+                      color: 'from-green-500 to-teal-500'
+                    },
+                    {
+                      icon: Clock,
+                      title: lang === 'ar' ? 'التزام بالمواعيد' : 'On-Time Commitment',
+                      description: lang === 'ar' ? 'نسلم مشاريعك في الوقت المحدد دون تأخير' : 'We deliver your projects on time without delay',
+                      color: 'from-purple-500 to-violet-500'
+                    },
+                    {
+                      icon: Shield,
+                      title: lang === 'ar' ? 'ضمان الجودة' : 'Quality Guarantee',
+                      description: lang === 'ar' ? 'ضمان شامل على الجودة مع إمكانية التعديل' : 'Comprehensive quality guarantee with revision options',
+                      color: 'from-orange-500 to-red-500'
+                    }
+                  ].map((item, index) => (
+                    <div key={index} className="text-center group">
+                      <div className={cn(
+                        "w-16 h-16 rounded-2xl bg-gradient-to-br mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-300",
+                        item.color
+                      )}>
+                        <item.icon className="w-8 h-8 text-white" />
+                      </div>
+                      <h4 className="font-bold text-gray-900 mb-2">{item.title}</h4>
+                      <p className="text-sm text-gray-600 leading-relaxed">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Custom Package CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
+                className="text-center"
+              >
+                <Card className="bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 border-purple-200 shadow-xl overflow-hidden">
+                  <CardContent className="p-8 relative">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full -translate-y-16 translate-x-16 opacity-30" />
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-orange-200 to-yellow-200 rounded-full translate-y-12 -translate-x-12 opacity-30" />
+                    
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                        <Lightbulb className="w-10 h-10 text-white" />
+                      </div>
+                      
+                      <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                        {lang === 'ar' ? 'لديك متطلبات خاصة ومميزة؟' : 'Have Special and Unique Requirements?'}
+                      </h3>
+                      
+                      <p className="text-gray-600 mb-6 max-w-lg leading-relaxed">
+                        {lang === 'ar' 
+                          ? 'لا تجد الباقة المناسبة؟ نحن نصمم باقة مخصصة تماماً لاحتياجاتك وميزانيتك. استشارة مجانية وعرض سعر مفصل.'
+                          : 'Cannot find the right package? We design a package completely customized to your needs and budget. Free consultation and detailed quote.'
+                        }
+                      </p>
+                      
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <Button 
+                          size="lg"
+                          onClick={() => {
+                            setSelectedPackage(null);
+                            form.setValue('selectedPackage', 'custom');
+                            setShowQuoteModal(true);
+                          }}
+                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:scale-105 transition-all duration-300"
+                          data-testid="button-custom-package"
+                        >
+                          <Sparkles className="w-5 h-5 mr-2" />
+                          {lang === 'ar' ? 'طلب باقة مخصصة' : 'Request Custom Package'}
+                        </Button>
+                        
+                        <Button 
+                          variant="outline"
+                          size="lg"
+                          onClick={() => {
+                            window.open(`https://wa.me/966505551234?text=${encodeURIComponent(
+                              lang === 'ar' 
+                                ? 'مرحباً، أرغب في استشارة مجانية حول تصميم الهوية البصرية'
+                                : 'Hello, I would like a free consultation about visual identity design'
+                            )}`, '_blank');
+                          }}
+                          className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                          data-testid="button-free-consultation"
+                        >
+                          <Users className="w-5 h-5 mr-2" />
+                          {lang === 'ar' ? 'استشارة مجانية' : 'Free Consultation'}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
           </div>
         </section>
 
