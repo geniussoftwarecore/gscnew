@@ -34,7 +34,14 @@ import {
   PaintBucket,
   ImageIcon,
   MonitorSpeaker,
-  Smartphone
+  Smartphone,
+  FileText,
+  DollarSign,
+  Calendar,
+  Building,
+  User,
+  HelpCircle,
+  Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +73,7 @@ const graphicsDesignRequestSchema = z.object({
   projectDescription: z.string().min(10, "وصف المشروع مطلوب"),
   budget: z.string().optional(),
   timeline: z.string().optional(),
+  businessType: z.string().optional(),
   additionalRequirements: z.string().optional(),
   attachments: z.array(z.any()).optional(),
 });
@@ -128,7 +136,9 @@ export default function GraphicsDesignService() {
       id: 'essential',
       title: lang === 'ar' ? 'الهوية البصرية الأساسية' : 'Essential Visual Identity',
       description: lang === 'ar' ? 'باقة أساسية شاملة للشركات الناشئة' : 'Complete essential package for startups',
-      price: '1,500 - 3,500 ريال',
+      price: '2,500 ريال',
+      originalPrice: '3,500 ريال',
+      discount: '29% خصم',
       features: [
         lang === 'ar' ? 'تصميم شعار احترافي (3 مفاهيم)' : 'Professional logo design (3 concepts)',
         lang === 'ar' ? 'دليل الهوية البصرية المبسط' : 'Simplified brand guidelines',
@@ -149,7 +159,9 @@ export default function GraphicsDesignService() {
       id: 'professional',
       title: lang === 'ar' ? 'الهوية البصرية الاحترافية' : 'Professional Visual Identity',
       description: lang === 'ar' ? 'باقة شاملة للشركات المتوسطة' : 'Complete package for medium businesses',
-      price: '4,500 - 8,500 ريال',
+      price: '6,500 ريال',
+      originalPrice: '8,500 ريال',
+      discount: '24% خصم',
       features: [
         lang === 'ar' ? 'تصميم شعار احترافي (5 مفاهيم)' : 'Professional logo design (5 concepts)',
         lang === 'ar' ? 'دليل الهوية البصرية المفصل' : 'Detailed brand guidelines',
@@ -171,7 +183,9 @@ export default function GraphicsDesignService() {
       id: 'premium',
       title: lang === 'ar' ? 'الهوية البصرية المتقدمة' : 'Premium Visual Identity',
       description: lang === 'ar' ? 'باقة متقدمة للمؤسسات الكبيرة' : 'Advanced package for large organizations',
-      price: '12,000 - 25,000 ريال',
+      price: '15,000 ريال',
+      originalPrice: '20,000 ريال',
+      discount: '25% خصم',
       features: [
         lang === 'ar' ? 'تصميم شعار متعدد الإصدارات' : 'Multi-version logo design',
         lang === 'ar' ? 'دليل هوية مؤسسي شامل' : 'Comprehensive corporate guidelines',
@@ -192,7 +206,9 @@ export default function GraphicsDesignService() {
       id: 'marketing',
       title: lang === 'ar' ? 'التصميمات التسويقية' : 'Marketing Materials',
       description: lang === 'ar' ? 'مواد تسويقية إبداعية ومؤثرة' : 'Creative and impactful marketing materials',
-      price: '500 - 5,000 ريال للقطعة',
+      price: '4,200 ريال',
+      originalPrice: '6,000 ريال',
+      discount: '30% خصم',
       features: [
         lang === 'ar' ? 'تصميم بروشورات وكتيبات' : 'Brochure and booklet design',
         lang === 'ar' ? 'إعلانات المجلات والجرائد' : 'Magazine and newspaper ads',
@@ -212,7 +228,9 @@ export default function GraphicsDesignService() {
       id: 'digital',
       title: lang === 'ar' ? 'المحتوى الرقمي' : 'Digital Content',
       description: lang === 'ar' ? 'محتوى رقمي جذاب لوسائل التواصل' : 'Engaging digital content for social media',
-      price: '2,000 - 8,000 ريال شهرياً',
+      price: '5,500 ريال شهرياً',
+      originalPrice: '7,500 ريال',
+      discount: '27% خصم',
       features: [
         lang === 'ar' ? 'منشورات يومية للسوشيال ميديا' : 'Daily social media posts',
         lang === 'ar' ? 'ستوريز تفاعلية ومتحركة' : 'Interactive animated stories',
@@ -232,7 +250,9 @@ export default function GraphicsDesignService() {
       id: 'print',
       title: lang === 'ar' ? 'المطبوعات التجارية' : 'Commercial Printing',
       description: lang === 'ar' ? 'مطبوعات عالية الجودة ومؤثرة' : 'High-quality impactful printing materials',
-      price: '300 - 3,000 ريال للقطعة',
+      price: '3,800 ريال',
+      originalPrice: '5,200 ريال',
+      discount: '27% خصم',
       features: [
         lang === 'ar' ? 'تصميم البروشورات والكتالوجات' : 'Brochure and catalog design',
         lang === 'ar' ? 'أغلفة الكتب والمجلات' : 'Book and magazine covers',
@@ -312,6 +332,7 @@ export default function GraphicsDesignService() {
       projectDescription: '',
       budget: '',
       timeline: '',
+      businessType: '',
       additionalRequirements: '',
       attachments: []
     }
@@ -336,16 +357,12 @@ export default function GraphicsDesignService() {
         formData.append('attachments', file);
       });
 
-      const response = await fetch('/api/graphics-design-orders', {
+      const result = await apiRequest('/api/graphics-design-orders', {
         method: 'POST',
         body: formData
       });
       
-      if (!response.ok) {
-        throw new Error('Failed to submit request');
-      }
-      
-      return response.json();
+      return result;
     },
     onSuccess: () => {
       toast({
@@ -1004,21 +1021,119 @@ export default function GraphicsDesignService() {
                   </div>
                 </div>
 
+                {/* Enhanced Form Fields */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="budget"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-green-600" />
+                          {lang === 'ar' ? 'الميزانية المتوقعة' : 'Expected Budget'}
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input 
+                              {...field} 
+                              placeholder={lang === 'ar' ? 'مثال: 5,000 ريال' : 'Example: 5,000 SAR'}
+                              className="pl-10"
+                              data-testid="input-budget"
+                            />
+                            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="timeline"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-blue-600" />
+                          {lang === 'ar' ? 'الجدول الزمني المطلوب' : 'Required Timeline'}
+                        </FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input 
+                              {...field} 
+                              placeholder={lang === 'ar' ? 'مثال: خلال أسبوعين' : 'Example: Within 2 weeks'}
+                              className="pl-10"
+                              data-testid="input-timeline"
+                            />
+                            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                {/* Business Type Selection */}
+                <FormField
+                  control={form.control}
+                  name="businessType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Building className="w-4 h-4 text-purple-600" />
+                        {lang === 'ar' ? 'نوع النشاط التجاري' : 'Business Type'}
+                      </FormLabel>
+                      <FormControl>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {[
+                            { id: 'startup', label: lang === 'ar' ? 'شركة ناشئة' : 'Startup', icon: Zap },
+                            { id: 'business', label: lang === 'ar' ? 'شركة تجارية' : 'Business', icon: Building },
+                            { id: 'freelancer', label: lang === 'ar' ? 'عمل حر' : 'Freelancer', icon: User },
+                            { id: 'other', label: lang === 'ar' ? 'أخرى' : 'Other', icon: HelpCircle }
+                          ].map((type) => (
+                            <button
+                              key={type.id}
+                              type="button"
+                              onClick={() => field.onChange(type.id)}
+                              className={cn(
+                                "p-3 border-2 rounded-lg transition-all text-center hover:scale-105",
+                                field.value === type.id
+                                  ? "border-purple-500 bg-purple-50 text-purple-700"
+                                  : "border-gray-200 hover:border-purple-300"
+                              )}
+                              data-testid={`button-business-type-${type.id}`}
+                            >
+                              <type.icon className="w-6 h-6 mx-auto mb-2" />
+                              <div className="text-sm font-medium">{type.label}</div>
+                            </button>
+                          ))}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 {/* Project Description */}
                 <FormField
                   control={form.control}
                   name="projectDescription"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{lang === 'ar' ? 'وصف المشروع' : 'Project Description'} *</FormLabel>
+                      <FormLabel className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-gray-600" />
+                        {lang === 'ar' ? 'وصف مفصل للمشروع والمتطلبات' : 'Detailed Project Description & Requirements'} *
+                      </FormLabel>
                       <FormControl>
                         <Textarea 
                           {...field} 
                           placeholder={lang === 'ar' 
-                            ? 'صف مشروعك وما تحتاجه بالتفصيل...' 
-                            : 'Describe your project and what you need in detail...'
+                            ? 'صف مشروعك بالتفصيل: نوع النشاط، الجمهور المستهدف، الألوان المفضلة، الرسالة المراد إيصالها، أي متطلبات خاصة...' 
+                            : 'Describe your project in detail: business type, target audience, preferred colors, message to convey, any special requirements...'
                           }
-                          rows={4}
+                          rows={5}
+                          className="resize-none"
                           data-testid="textarea-project-description"
                         />
                       </FormControl>
@@ -1026,36 +1141,158 @@ export default function GraphicsDesignService() {
                     </FormItem>
                   )}
                 />
+                
+                <FormField
+                  control={form.control}
+                  name="additionalRequirements"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Plus className="w-4 h-4 text-gray-600" />
+                        {lang === 'ar' ? 'متطلبات أو ملاحظات إضافية' : 'Additional Requirements or Notes'}
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field} 
+                          placeholder={lang === 'ar' 
+                            ? 'أي متطلبات خاصة، مراجع تصميمية، أو ملاحظات إضافية...' 
+                            : 'Any special requirements, design references, or additional notes...'
+                          }
+                          rows={3}
+                          className="resize-none"
+                          data-testid="textarea-additional-requirements"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                {/* Submit Button */}
-                <div className="flex gap-4 pt-4">
-                  <Button 
-                    type="submit" 
-                    disabled={submitMutation.isPending}
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                    data-testid="button-submit-request"
-                  >
-                    {submitMutation.isPending ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                        {lang === 'ar' ? 'جاري الإرسال...' : 'Sending...'}
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4 mr-2" />
-                        {lang === 'ar' ? 'إرسال الطلب' : 'Send Request'}
-                      </>
-                    )}
-                  </Button>
+                {/* Request Summary */}
+                {(selectedFeatures.length > 0 || selectedPackage) && (
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
+                    <h4 className="font-bold text-purple-900 mb-4 flex items-center">
+                      <Package className="w-5 h-5 mr-2" />
+                      {lang === 'ar' ? 'ملخص طلبك المخصص' : 'Your Custom Request Summary'}
+                    </h4>
+                    
+                    <div className="space-y-3 text-sm">
+                      {selectedPackage && (
+                        <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-purple-100">
+                          <div>
+                            <span className="font-semibold text-gray-900">{selectedPackage.title}</span>
+                            <p className="text-xs text-gray-600 mt-1">{selectedPackage.description}</p>
+                          </div>
+                          <div className="text-right">
+                            <Badge className="bg-purple-100 text-purple-700 mb-1">
+                              {selectedPackage.price}
+                            </Badge>
+                            {selectedPackage.timeline && (
+                              <div className="text-xs text-gray-500 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {selectedPackage.timeline}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {selectedFeatures.length > 0 && (
+                        <div className="p-3 bg-white rounded-lg border border-purple-100">
+                          <div className="font-semibold text-gray-900 mb-2 flex items-center justify-between">
+                            <span>{lang === 'ar' ? 'المميزات المختارة:' : 'Selected Features:'}</span>
+                            <Badge variant="outline" className="text-purple-700">
+                              {selectedFeatures.length} {lang === 'ar' ? 'ميزة' : 'features'}
+                            </Badge>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedFeatures.map((featureId) => {
+                              const feature = featureCategories
+                                .flatMap(cat => cat.features)
+                                .find(f => f.id === featureId);
+                              return feature ? (
+                                <div key={featureId} className="flex items-center gap-2 bg-purple-50 px-3 py-1 rounded-lg">
+                                  <Check className="w-3 h-3 text-purple-600" />
+                                  <span className="text-xs font-medium text-purple-800">
+                                    {feature.name.split(' ').slice(0, 3).join(' ')}
+                                  </span>
+                                  {feature.price && (
+                                    <span className="text-xs text-purple-600 font-bold">
+                                      {feature.price}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2 text-green-700 font-medium text-sm">
+                          <Shield className="w-4 h-4" />
+                          {lang === 'ar' ? 'ضمانات GSC:' : 'GSC Guarantees:'}
+                        </div>
+                        <div className="grid md:grid-cols-3 gap-2 mt-2 text-xs text-gray-600">
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-blue-600" />
+                            {lang === 'ar' ? 'تسليم في الوقت' : 'On-time delivery'}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Heart className="w-3 h-3 text-red-500" />
+                            {lang === 'ar' ? 'دعم مجاني' : 'Free support'}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Award className="w-3 h-3 text-yellow-600" />
+                            {lang === 'ar' ? 'جودة احترافية' : 'Professional quality'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Enhanced Submit Section */}
+                <div className="space-y-4 pt-4">
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 mb-4">
+                      {lang === 'ar' 
+                        ? 'سيتم مراجعة طلبك خلال 24 ساعة وسنتواصل معك لتأكيد التفاصيل وموعد البدء'
+                        : 'Your request will be reviewed within 24 hours and we will contact you to confirm details and start date'
+                      }
+                    </p>
+                  </div>
                   
-                  <Button 
-                    type="button" 
-                    variant="outline"
-                    onClick={() => setShowQuoteModal(false)}
-                    data-testid="button-cancel"
-                  >
-                    {lang === 'ar' ? 'إلغاء' : 'Cancel'}
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      type="submit" 
+                      disabled={submitMutation.isPending}
+                      className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:scale-105 transition-all duration-300"
+                      data-testid="button-submit-request"
+                    >
+                      {submitMutation.isPending ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                          {lang === 'ar' ? 'جاري إرسال طلبك...' : 'Sending your request...'}
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          {lang === 'ar' ? 'إرسال طلب العرض المخصص' : 'Send Custom Quote Request'}
+                        </>
+                      )}
+                    </Button>
+                    
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={() => setShowQuoteModal(false)}
+                      className="flex-1 sm:flex-none border-purple-300 text-purple-700 hover:bg-purple-50"
+                      data-testid="button-cancel"
+                    >
+                      {lang === 'ar' ? 'إلغاء' : 'Cancel'}
+                    </Button>
+                  </div>
                 </div>
               </form>
             </Form>
