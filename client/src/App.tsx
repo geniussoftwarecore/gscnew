@@ -27,6 +27,7 @@ const ServiceDetail = lazy(() => import("@/pages/service-detail"));
 const MobileDetail = lazy(() => import("@/pages/services/mobile"));
 const WebDetail = lazy(() => import("@/pages/services/web"));
 const DesktopDetail = lazy(() => import("@/pages/services/desktop"));
+const GraphicsDesignService = lazy(() => import("@/pages/services/GraphicsDesignService"));
 const ERPNextPage = lazy(() => import("@/pages/erpnext"));
 const PortfolioIndex = lazy(() => import("@/pages/portfolio/index"));
 const ProjectDetail = lazy(() => import("@/pages/portfolio/[slug]"));
@@ -104,6 +105,11 @@ function Router() {
       <Route path="/services/d7e8f9g0-h1i2-j3k4-l5m6-n7o8p9q0r1s2">
         <Suspense fallback={<PageSkeleton />}>
           <DesktopDetail />
+        </Suspense>
+      </Route>
+      <Route path="/services/9a6c839d-2a5c-4418-832a-2a5bd14dcf7e">
+        <Suspense fallback={<PageSkeleton />}>
+          <GraphicsDesignService />
         </Suspense>
       </Route>
       <Route path="/services/:id">
