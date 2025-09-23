@@ -28,6 +28,7 @@ import React, { useMemo, useState, useEffect, useRef, lazy, Suspense, useCallbac
 import ConsolidatedERPNextV15Section from "@/components/erpnext/ConsolidatedERPNextV15Section";
 import MobileAppPlanningSystem from "@/components/services/MobileAppPlanningSystem";
 import WebDevelopmentServicePage from "@/pages/services/web-development";
+import DigitalMarketingService from "@/pages/services/DigitalMarketingService";
 import { projectRequestSchema, type ProjectRequestFormData } from "@shared/schema";
 
 // Service interface
@@ -243,6 +244,8 @@ export default function ServiceDetailClean() {
   
   // Check if this is the web development service - return early but after initial hooks
   const isWebDevelopmentService = id === '562fce34-abbd-4ba9-abc5-bc6b4afe61c7';
+  // Check if this is the digital marketing service
+  const isDigitalMarketingService = id === 'e4f7b3d1-8c9a-4b5d-9e2f-1a3c5d7e9f1b';
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedAppDetails, setSelectedAppDetails] = useState<AppCard | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -1464,6 +1467,11 @@ export default function ServiceDetailClean() {
   // Conditional return for web development service
   if (isWebDevelopmentService) {
     return <WebDevelopmentServicePage />;
+  }
+
+  // Conditional return for digital marketing service
+  if (isDigitalMarketingService) {
+    return <DigitalMarketingService />;
   }
 
   // If not mobile app service and not web development service, show the ERPNext section or basic service view
