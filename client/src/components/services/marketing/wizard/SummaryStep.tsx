@@ -19,7 +19,8 @@ import {
   Send,
   CheckCircle,
   Sparkles,
-  Megaphone
+  Megaphone,
+  ArrowRight
 } from "lucide-react";
 
 interface ContactFormData {
@@ -65,6 +66,16 @@ export function SummaryStep({
   isSubmitting
 }: SummaryStepProps) {
   const { lang, dir } = useLanguage();
+
+  // Format price for display based on language
+  const formatPrice = (usdPrice: number) => {
+    if (lang === 'ar') {
+      const sarPrice = Math.round(usdPrice * 3.75); // USD to SAR conversion
+      return `${sarPrice} ر.س`;
+    } else {
+      return `$${usdPrice}`;
+    }
+  };
 
   // Package details
   const packages = {
@@ -264,7 +275,7 @@ export function SummaryStep({
                           {featureDetails[featureId as keyof typeof featureDetails]?.name || featureId}
                         </span>
                         <span className="font-medium text-orange-600">
-                          {lang === 'ar' ? `${featurePrices[featureId]} ر.س` : `$${featurePrices[featureId]}`}
+                          {formatPrice(featurePrices[featureId])}
                         </span>
                       </div>
                     ))}
@@ -276,7 +287,7 @@ export function SummaryStep({
                       <div className="flex items-center justify-between font-semibold">
                         <span>{lang === 'ar' ? 'إجمالي الميزات الإضافية:' : 'Additional Features Total:'}</span>
                         <span className="text-orange-600" data-testid="text-features-total">
-                          {lang === 'ar' ? `${additionalFeaturesTotal} ر.س` : `$${additionalFeaturesTotal}`}
+                          {formatPrice(additionalFeaturesTotal)}
                         </span>
                       </div>
                     </>

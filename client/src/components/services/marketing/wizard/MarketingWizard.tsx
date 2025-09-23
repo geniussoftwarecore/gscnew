@@ -72,18 +72,28 @@ export function MarketingWizard({ onClose }: MarketingWizardProps) {
     additionalRequirements: ''
   });
 
-  // Feature prices for calculation
+  // Feature prices for calculation (in USD)
   const featurePrices: Record<string, number> = {
-    social_media_premium: lang === 'ar' ? 1200 : 320,
-    seo_optimization: lang === 'ar' ? 900 : 240,
-    content_creation: lang === 'ar' ? 800 : 213,
-    paid_advertising: lang === 'ar' ? 1500 : 400,
-    email_marketing: lang === 'ar' ? 600 : 160,
-    analytics_reporting: lang === 'ar' ? 700 : 187,
-    influencer_marketing: lang === 'ar' ? 2000 : 533,
-    video_production: lang === 'ar' ? 1800 : 480,
-    brand_strategy: lang === 'ar' ? 1000 : 267,
-    competitor_analysis: lang === 'ar' ? 500 : 133
+    social_media_premium: 320,
+    seo_optimization: 240,
+    content_creation: 213,
+    paid_advertising: 400,
+    email_marketing: 160,
+    analytics_reporting: 187,
+    influencer_marketing: 533,
+    video_production: 480,
+    brand_strategy: 267,
+    competitor_analysis: 133
+  };
+
+  // Format price for display based on language
+  const formatPrice = (usdPrice: number) => {
+    if (lang === 'ar') {
+      const sarPrice = Math.round(usdPrice * 3.75); // USD to SAR conversion
+      return `${sarPrice} ر.س`;
+    } else {
+      return `$${usdPrice}`;
+    }
   };
 
   // Submit mutation

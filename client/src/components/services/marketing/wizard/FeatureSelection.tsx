@@ -67,7 +67,7 @@ export function FeatureSelection({
           'Professional management of all social platforms with smart scheduling and interactive responses',
         icon: Users,
         category: 'social',
-        price: lang === 'ar' ? 1200 : 320,
+        price: 320,
         duration: lang === 'ar' ? '+5 أيام' : '+5 days',
         isRecommended: true,
         packageCompatibility: ['business', 'premium']
@@ -80,7 +80,7 @@ export function FeatureSelection({
           'Comprehensive optimization of your website and content to dominate search results',
         icon: Search,
         category: 'seo',
-        price: lang === 'ar' ? 900 : 240,
+        price: 240,
         duration: lang === 'ar' ? '+7 أيام' : '+7 days',
         isRecommended: true,
         packageCompatibility: ['starter', 'business', 'premium']
@@ -93,7 +93,7 @@ export function FeatureSelection({
           'Produce high-quality visual and written content that attracts and retains your audience',
         icon: Video,
         category: 'content',
-        price: lang === 'ar' ? 800 : 213,
+        price: 213,
         duration: lang === 'ar' ? '+4 أيام' : '+4 days',
         packageCompatibility: ['starter', 'business', 'premium']
       },
@@ -105,7 +105,7 @@ export function FeatureSelection({
           'Manage and optimize paid ad campaigns on Google, Facebook, and Instagram',
         icon: Target,
         category: 'advertising',
-        price: lang === 'ar' ? 1500 : 400,
+        price: 400,
         duration: lang === 'ar' ? '+3 أيام' : '+3 days',
         isPremium: true,
         packageCompatibility: ['business', 'premium']
@@ -118,7 +118,7 @@ export function FeatureSelection({
           'Design and execute effective email campaigns that increase conversions',
         icon: Mail,
         category: 'email',
-        price: lang === 'ar' ? 600 : 160,
+        price: 160,
         duration: lang === 'ar' ? '+3 أيام' : '+3 days',
         packageCompatibility: ['business', 'premium']
       },
@@ -130,7 +130,7 @@ export function FeatureSelection({
           'Comprehensive analysis of your campaign performance with detailed reports and improvement recommendations',
         icon: BarChart3,
         category: 'analytics',
-        price: lang === 'ar' ? 700 : 187,
+        price: 187,
         duration: lang === 'ar' ? '+2 يوم' : '+2 days',
         isRecommended: true,
         packageCompatibility: ['starter', 'business', 'premium']
@@ -143,7 +143,7 @@ export function FeatureSelection({
           'Connect with relevant influencers and manage marketing campaigns with them',
         icon: Star,
         category: 'influencer',
-        price: lang === 'ar' ? 2000 : 533,
+        price: 533,
         duration: lang === 'ar' ? '+10 أيام' : '+10 days',
         isPremium: true,
         packageCompatibility: ['premium']
@@ -156,7 +156,7 @@ export function FeatureSelection({
           'Produce professional marketing videos for social media and advertising',
         icon: Video,
         category: 'video',
-        price: lang === 'ar' ? 1800 : 480,
+        price: 480,
         duration: lang === 'ar' ? '+7 أيام' : '+7 days',
         isPremium: true,
         packageCompatibility: ['business', 'premium']
@@ -169,7 +169,7 @@ export function FeatureSelection({
           'Develop comprehensive brand strategy and market positioning',
         icon: Crown,
         category: 'branding',
-        price: lang === 'ar' ? 1000 : 267,
+        price: 267,
         duration: lang === 'ar' ? '+5 أيام' : '+5 days',
         packageCompatibility: ['business', 'premium']
       },
@@ -181,7 +181,7 @@ export function FeatureSelection({
           'Comprehensive analysis of competitor strategies and market opportunities discovery',
         icon: Zap,
         category: 'research',
-        price: lang === 'ar' ? 500 : 133,
+        price: 133,
         duration: lang === 'ar' ? '+3 أيام' : '+3 days',
         packageCompatibility: ['starter', 'business', 'premium']
       }
@@ -193,6 +193,16 @@ export function FeatureSelection({
   };
 
   const features = getPackageFeatures();
+
+  // Format price for display based on language
+  const formatPrice = (usdPrice: number) => {
+    if (lang === 'ar') {
+      const sarPrice = Math.round(usdPrice * 3.75); // USD to SAR conversion
+      return `${sarPrice} ر.س`;
+    } else {
+      return `$${usdPrice}`;
+    }
+  };
   
   const categories = [
     { id: 'social', name: lang === 'ar' ? 'وسائل التواصل' : 'Social Media', color: 'from-blue-500 to-cyan-500' },
@@ -257,8 +267,8 @@ export function FeatureSelection({
           <DollarSign className="w-4 h-4" />
           <AlertDescription>
             {lang === 'ar' ? 
-              `إجمالي الميزات الإضافية: ${totalPrice} ر.س` :
-              `Additional features total: $${totalPrice}`
+              `إجمالي الميزات الإضافية: ${formatPrice(totalPrice)}` :
+              `Additional features total: ${formatPrice(totalPrice)}`
             }
           </AlertDescription>
         </Alert>
@@ -340,7 +350,7 @@ export function FeatureSelection({
                         </div>
                         
                         <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                          {lang === 'ar' ? `${feature.price} ر.س` : `$${feature.price}`}
+                          {formatPrice(feature.price)}
                         </div>
                       </div>
                     </CardContent>
