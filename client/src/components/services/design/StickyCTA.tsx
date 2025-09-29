@@ -56,7 +56,7 @@ export function StickyCTA({ onStartWizard, className }: StickyCTAProps) {
             className
           )}
         >
-          <Card className="max-w-4xl mx-auto shadow-2xl border-none bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white pointer-events-auto">
+          <Card className="max-w-4xl mx-auto shadow-2xl border-none bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white pointer-events-auto">
             <CardContent className="p-6">
               <div className="flex items-center justify-between gap-4">
                 {/* Content */}

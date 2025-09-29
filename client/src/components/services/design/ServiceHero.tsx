@@ -67,7 +67,7 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
   ];
 
   return (
-    <section className={cn("relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 py-20 lg:py-32", className)}>
+    <section className={cn("relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-sky-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900 py-20 lg:py-32", className)}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
@@ -103,7 +103,7 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent leading-tight"
+                className="text-4xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 bg-clip-text text-transparent leading-tight"
               >
                 {lang === 'ar' ? (
                   <>

@@ -36,7 +36,7 @@ export function FeatureGrid({ className }: FeatureGridProps) {
         ['شعار أساسي', 'نسخة أفقية وعمودية', 'ملفات متعددة الأشكال', 'دليل الاستخدام'] :
         ['Primary logo', 'Horizontal & vertical versions', 'Multiple file formats', 'Usage guidelines'],
       category: 'essential',
-      color: 'bg-gradient-to-br from-purple-500 to-pink-500'
+      color: 'bg-gradient-to-br from-sky-500 to-cyan-500'
     },
     {
       icon: FileText,
@@ -84,7 +84,7 @@ export function FeatureGrid({ className }: FeatureGridProps) {
         ['تصميم العلبة', 'الملصقات', 'أكياس التسوق', 'عبوات المنتجات'] :
         ['Box design', 'Labels', 'Shopping bags', 'Product containers'],
       category: 'product',
-      color: 'bg-gradient-to-br from-violet-500 to-purple-500'
+      color: 'bg-gradient-to-br from-sky-500 to-blue-500'
     },
     {
       icon: Smartphone,

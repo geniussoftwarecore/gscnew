@@ -44,7 +44,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
       activities: lang === 'ar' ? 
         ['تطوير المود بورد', 'اختيار لوحة الألوان', 'تحديد النمط البصري', 'إنشاء المفاهيم الأولية'] :
         ['Mood board development', 'Color palette selection', 'Visual style determination', 'Initial concept creation'],
-      color: 'from-purple-500 to-pink-500'
+      color: 'from-sky-500 to-cyan-500'
     },
     {
       icon: Palette,
@@ -96,7 +96,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
         >
           <Badge 
             variant="secondary" 
-            className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 px-4 py-2 text-sm font-medium mb-4"
+            className="bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-100 px-4 py-2 text-sm font-medium mb-4"
           >
             <Sparkles className="w-4 h-4 mr-2" />
             {lang === 'ar' ? 'منهجية العمل' : 'Work Methodology'}
@@ -116,7 +116,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500 hidden lg:block"></div>
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-sky-500 to-green-500 hidden lg:block"></div>
 
           <div className="space-y-12">
             {steps.map((step, index) => (
@@ -197,7 +197,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
           viewport={{ once: true }}
           className="text-center mt-16"
         >
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white shadow-2xl">
+          <div className="bg-gradient-to-r from-indigo-500 to-sky-600 rounded-2xl p-8 text-white shadow-2xl">
             <div className="max-w-3xl mx-auto">
               <h3 className="text-2xl font-bold mb-4">
                 {lang === 'ar' ? 'مدة التنفيذ الإجمالية: 10-15 يوم عمل' : 'Total Execution Time: 10-15 Working Days'}
