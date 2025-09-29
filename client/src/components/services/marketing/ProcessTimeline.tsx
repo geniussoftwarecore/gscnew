@@ -80,8 +80,8 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
       descriptionAr: "مراقبة الأداء باستمرار وتحليل البيانات وتحسين الحملات للحصول على نتائج أفضل",
       duration: "Ongoing",
       durationAr: "مستمر",
-      color: "text-purple-600",
-      bgColor: "bg-purple-100 dark:bg-purple-900/30"
+      color: "text-sky-600",
+      bgColor: "bg-sky-100 dark:bg-sky-900/30"
     },
     {
       id: 5,

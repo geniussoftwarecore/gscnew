@@ -81,7 +81,7 @@ export function FeatureGrid() {
       descriptionAr: "محتوى بصري ومكتوب عالي الجودة يجذب جمهورك",
       category: "Content",
       categoryAr: "المحتوى",
-      color: "from-purple-500 to-violet-500"
+      color: "from-sky-500 to-cyan-500"
     },
     {
       icon: TrendingUp,
@@ -141,7 +141,7 @@ export function FeatureGrid() {
       descriptionAr: "بناء ورعاية مجتمع متفاعل عبر الإنترنت حول علامتك التجارية",
       category: "Community",
       categoryAr: "المجتمع",
-      color: "from-violet-500 to-purple-500"
+      color: "from-sky-500 to-blue-500"
     },
     {
       icon: Share2,
