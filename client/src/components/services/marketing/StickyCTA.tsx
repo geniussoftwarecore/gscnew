@@ -71,7 +71,7 @@ export function StickyCTA({ onStartWizard, className }: StickyCTAProps) {
             <Button
               onClick={() => setIsMinimized(false)}
               size="lg"
-              className="w-14 h-14 rounded-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-2xl hover:shadow-orange-500/25 transition-all duration-300 p-0"
+              className="w-14 h-14 rounded-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white shadow-2xl hover:shadow-sky-500/25 transition-all duration-300 p-0"
               data-testid="button-expand-sticky-cta"
             >
               <Megaphone className="w-6 h-6" />
@@ -100,7 +100,7 @@ export function StickyCTA({ onStartWizard, className }: StickyCTAProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-blue-500 rounded-full flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <Badge variant="secondary" className="text-xs">
@@ -139,7 +139,7 @@ export function StickyCTA({ onStartWizard, className }: StickyCTAProps) {
                 <div className="space-y-2">
                   {features.map((feature, index) => (
                     <div key={index} className="flex items-center gap-2">
-                      <feature.icon className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                      <feature.icon className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                       <span className="text-sm text-gray-700 dark:text-gray-300">
                         {feature.text}
                       </span>
@@ -151,7 +151,7 @@ export function StickyCTA({ onStartWizard, className }: StickyCTAProps) {
                 <div className="space-y-2">
                   <Button
                     onClick={onStartWizard}
-                    className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                    className="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
                     data-testid="button-start-marketing-wizard"
                   >
                     <Megaphone className="w-4 h-4 mr-2" />

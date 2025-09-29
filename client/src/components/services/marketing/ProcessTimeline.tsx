@@ -68,8 +68,8 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
       descriptionAr: "تصميم وإطلاق حملات مستهدفة عبر المنصات المختارة مع محتوى جذاب",
       duration: "5-7 Days",
       durationAr: "5-7 أيام",
-      color: "text-orange-600",
-      bgColor: "bg-orange-100 dark:bg-orange-900/30"
+      color: "text-sky-600",
+      bgColor: "bg-sky-100 dark:bg-sky-900/30"
     },
     {
       id: 4,
@@ -120,7 +120,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 dark:text-orange-400 dark:border-orange-800 dark:bg-orange-950/20 mb-4">
+          <Badge variant="outline" className="text-sky-600 border-sky-200 bg-sky-50 dark:text-sky-400 dark:border-sky-800 dark:bg-sky-950/20 mb-4">
             <Clock className="w-4 h-4 mr-2" />
             {lang === 'ar' ? 'عملية العمل' : 'Our Process'}
           </Badge>
@@ -143,7 +143,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
         {/* Timeline */}
         <div className="relative">
           {/* Vertical Line */}
-          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-200 via-red-200 to-pink-200 dark:from-orange-800 dark:via-red-800 dark:to-pink-800 hidden lg:block" />
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-sky-200 via-blue-200 to-cyan-200 dark:from-sky-800 dark:via-blue-800 dark:to-cyan-800 hidden lg:block" />
 
           {/* Steps */}
           <div className="space-y-12">
@@ -157,7 +157,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
                 className="relative"
               >
                 {/* Step Number Circle */}
-                <div className="absolute left-0 lg:left-6 w-8 h-8 lg:w-12 lg:h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-lg">
+                <div className="absolute left-0 lg:left-6 w-8 h-8 lg:w-12 lg:h-12 bg-gradient-to-r from-sky-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-sm lg:text-base">
                     {step.id}
                   </span>
@@ -230,7 +230,7 @@ export function ProcessTimeline({ className }: ProcessTimelineProps) {
           </div>
 
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-sky-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">95%</div>

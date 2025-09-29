@@ -71,7 +71,7 @@ export function FeatureGrid() {
       descriptionAr: "حملات إعلانية استراتيجية على جوجل وفيسبوك وإنستغرام والمنصات الأخرى",
       category: "Advertising",
       categoryAr: "الإعلانات",
-      color: "from-orange-500 to-red-500"
+      color: "from-sky-500 to-blue-500"
     },
     {
       icon: Video,
@@ -111,7 +111,7 @@ export function FeatureGrid() {
       descriptionAr: "التواصل مع المؤثرين المناسبين لتوسيع نطاق علامتك التجارية",
       category: "Influencer",
       categoryAr: "المؤثرين",
-      color: "from-amber-500 to-orange-500"
+      color: "from-sky-500 to-cyan-500"
     },
     {
       icon: Globe,
@@ -187,7 +187,7 @@ export function FeatureGrid() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 dark:text-orange-400 dark:border-orange-800 dark:bg-orange-950/20 mb-4">
+          <Badge variant="outline" className="text-sky-600 border-sky-200 bg-sky-50 dark:text-sky-400 dark:border-sky-800 dark:bg-sky-950/20 mb-4">
             {lang === 'ar' ? 'خدماتنا التسويقية' : 'Our Marketing Services'}
           </Badge>
           
@@ -233,7 +233,7 @@ export function FeatureGrid() {
                     {lang === 'ar' ? feature.categoryAr : feature.category}
                   </Badge>
                   
-                  <CardTitle className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors duration-300">
+                  <CardTitle className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors duration-300">
                     {lang === 'ar' ? feature.titleAr : feature.title}
                   </CardTitle>
                 </CardHeader>
@@ -265,7 +265,7 @@ export function FeatureGrid() {
           
           <a 
             href="#get-started" 
-            className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
             data-testid="button-get-started"
           >
             {lang === 'ar' ? 'ابدأ خطتك التسويقية' : 'Start Your Marketing Plan'}

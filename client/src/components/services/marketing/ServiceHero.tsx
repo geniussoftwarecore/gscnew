@@ -67,11 +67,11 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
   ];
 
   return (
-    <section className={cn("relative overflow-hidden bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 dark:from-gray-900 dark:via-orange-900 dark:to-red-900 py-20 lg:py-32", className)}>
+    <section className={cn("relative overflow-hidden bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50 dark:from-gray-900 dark:via-sky-900 dark:to-blue-900 py-20 lg:py-32", className)}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23f97316' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-16.569 13.431-30 30-30v60c-16.569 0-30-13.431-30-30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230ea5e9' fill-opacity='0.1'%3E%3Cpath d='M30 30c0-16.569 13.431-30 30-30v60c-16.569 0-30-13.431-30-30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }} />
       </div>
 
@@ -90,7 +90,7 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 dark:text-orange-400 dark:border-orange-800 dark:bg-orange-950/20 px-4 py-2">
+              <Badge variant="outline" className="text-sky-600 border-sky-200 bg-sky-50 dark:text-sky-400 dark:border-sky-800 dark:bg-sky-950/20 px-4 py-2">
                 <Megaphone className="w-4 h-4 mr-2" />
                 {lang === 'ar' ? 'التسويق الرقمي والإعلانات' : 'Digital Marketing & Advertising'}
               </Badge>
@@ -107,7 +107,7 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
                 {lang === 'ar' ? (
                   <>
                     اجعل علامتك التجارية{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-blue-600">
                       تتصدر
                     </span>{' '}
                     المشهد الرقمي
@@ -115,7 +115,7 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
                 ) : (
                   <>
                     Make Your Brand{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-blue-600">
                       Dominate
                     </span>{' '}
                     the Digital Space
@@ -140,8 +140,8 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
             >
               {highlights.map((highlight, index) => (
                 <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-                  <div className="flex-shrink-0 w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
-                    <highlight.icon className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                  <div className="flex-shrink-0 w-8 h-8 bg-sky-100 dark:bg-sky-900/30 rounded-full flex items-center justify-center">
+                    <highlight.icon className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                   </div>
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {highlight.text}
@@ -160,7 +160,7 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
               <Button
                 onClick={onStartWizard}
                 size="lg"
-                className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group px-8 py-3"
+                className="bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group px-8 py-3"
                 data-testid="button-start-wizard"
               >
                 {lang === 'ar' ? 'احصل على خطة تسويقية' : 'Get Marketing Plan'}
@@ -170,7 +170,7 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-orange-200 text-orange-700 hover:bg-orange-50 dark:border-orange-800 dark:text-orange-400 dark:hover:bg-orange-950/20 px-8 py-3"
+                className="border-sky-200 text-sky-700 hover:bg-sky-50 dark:border-sky-800 dark:text-sky-400 dark:hover:bg-sky-950/20 px-8 py-3"
                 data-testid="button-view-portfolio"
               >
                 {lang === 'ar' ? 'عرض أعمالنا' : 'View Our Work'}
@@ -191,11 +191,11 @@ export function ServiceHero({ onStartWizard, className }: ServiceHeroProps) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-                className="p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-orange-100 dark:border-orange-900/30"
+                className="p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-sky-100 dark:border-sky-900/30"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                  <div className="w-10 h-10 bg-sky-100 dark:bg-sky-900/30 rounded-full flex items-center justify-center">
+                    <stat.icon className="w-5 h-5 text-sky-600 dark:text-sky-400" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
