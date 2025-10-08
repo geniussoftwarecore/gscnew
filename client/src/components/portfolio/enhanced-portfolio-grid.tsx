@@ -288,7 +288,7 @@ export default function EnhancedPortfolioGrid({
                   : 'space-y-6'
               }`}
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence>
                 {displayItems.map((item, index) => (
                   <EnhancedProjectCard
                     key={item.slug}

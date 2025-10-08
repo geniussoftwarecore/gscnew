@@ -1,426 +1,284 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Section } from "@/components/ui/Section";
-import { Container } from "@/components/ui/Container";
-import { AnimatedCard } from "@/components/ui/AnimatedCard";
-import { AnimatedSection } from "@/components/ui/AnimatedSection";
-import { AnimatedText } from "@/components/ui/AnimatedText";
+import { PortfolioItem } from "@shared/schema";
+import EnhancedPortfolioHero from "@/components/portfolio/enhanced-portfolio-hero";
+import EnhancedPortfolioGrid from "@/components/portfolio/enhanced-portfolio-grid";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { PortfolioItem } from "@shared/schema";
-import { Skeleton } from "@/components/ui/skeleton";
-import { EnhancedSearchBar } from "@/components/portfolio/enhanced-search-bar";
-import { EnhancedProjectGallery } from "@/components/portfolio/enhanced-project-gallery";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
-import { Grid, Globe, Smartphone, Monitor, Settings, Megaphone, CheckCircle, Heart, Headphones, Award, ExternalLink } from "lucide-react";
-import { useLanguage } from "@/i18n/lang";
+import { Rocket, List, ArrowLeft, Sparkles } from "lucide-react";
 
 export default function Portfolio() {
-  const { dir } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filters, setFilters] = useState({
-    technologies: [] as string[],
-    categories: [] as string[],
-    sortBy: 'newest' as 'newest' | 'oldest' | 'popular' | 'alphabetical'
-  });
-  
   const { data: portfolio, isLoading, error } = useQuery<PortfolioItem[]>({
     queryKey: ["/api/portfolio"],
   });
 
-  // Mock data for search functionality
-  const recentSearches = ["React", "موبايل", "تطبيق"];
-  const popularSearches = ["تطبيق ويب", "React Native", "UI/UX", "تجارة إلكترونية"];
+  // Calculate statistics from portfolio data
+  const portfolioStats = useMemo(() => {
+    if (!portfolio) return {
+      totalProjects: 0,
+      totalIndustries: 0,
+      yearsExperience: 5,
+      satisfaction: 98,
+      totalClients: 150,
+      totalTechnologies: 25
+    };
 
-  const categories = [
-    { id: "all", label: "جميع المشاريع", icon: Grid },
-    { id: "web", label: "تطبيقات الويب", icon: Globe },
-    { id: "mobile", label: "التطبيقات المحمولة", icon: Smartphone },
-    { id: "desktop", label: "تطبيقات سطح المكتب", icon: Monitor },
-    { id: "erp", label: "أنظمة ERP", icon: Settings },
-    { id: "marketing", label: "التسويق الرقمي", icon: Megaphone },
-  ];
-
-  // Enhanced filtering and search logic
-  const { filteredPortfolio, availableTechnologies } = useMemo(() => {
-    if (!portfolio) return { filteredPortfolio: [], availableTechnologies: [] };
-
-    // Get all unique technologies
-    const allTechnologies = Array.from(
-      new Set(portfolio.flatMap(project => project.technologies || []))
-    ).sort();
-
-    // Apply filters
-    let filtered = portfolio.filter(project => {
-      // Search query filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const matchesTitle = project.title.toLowerCase().includes(query);
-        const matchesDescription = project.description.toLowerCase().includes(query);
-        const matchesTechnologies = project.technologies?.some(tech => 
-          tech.toLowerCase().includes(query)
-        );
-        
-        if (!matchesTitle && !matchesDescription && !matchesTechnologies) {
-          return false;
-        }
-      }
-
-      // Category filter
-      if (filters.categories.length > 0 && !filters.categories.includes(project.category)) {
-        return false;
-      }
-
-      // Technology filter
-      if (filters.technologies.length > 0) {
-        const hasMatchingTech = filters.technologies.some(tech => 
-          project.technologies?.includes(tech)
-        );
-        if (!hasMatchingTech) return false;
-      }
-
-      return true;
-    });
-
-    // Apply sorting
-    switch (filters.sortBy) {
-      case 'oldest':
-        filtered = filtered.sort((a, b) => a.id.localeCompare(b.id));
-        break;
-      case 'alphabetical':
-        filtered = filtered.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'popular':
-        // For demo, sort by category then title
-        filtered = filtered.sort((a, b) => {
-          if (a.category === b.category) return a.title.localeCompare(b.title);
-          return a.category.localeCompare(b.category);
-        });
-        break;
-      case 'newest':
-      default:
-        filtered = filtered.sort((a, b) => b.id.localeCompare(a.id));
-        break;
-    }
-
-    return { filteredPortfolio: filtered, availableTechnologies: allTechnologies };
-  }, [portfolio, searchQuery, filters]);
-
-  const stats = [
-    { value: "50+", label: "مشروع مكتمل", icon: CheckCircle },
-    { value: "98%", label: "رضا العملاء", icon: Heart },
-    { value: "24/7", label: "دعم متواصل", icon: Headphones },
-    { value: "5+", label: "سنوات خبرة", icon: Award },
-  ];
+    const uniqueIndustries = new Set(portfolio.map(p => p.industry)).size;
+    const allTechnologies = new Set(portfolio.flatMap(p => p.technologies || []));
+    
+    return {
+      totalProjects: portfolio.length,
+      totalIndustries: uniqueIndustries || 8,
+      yearsExperience: 5,
+      satisfaction: 98,
+      totalClients: 150,
+      totalTechnologies: allTechnologies.size || 25
+    };
+  }, [portfolio]);
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-500 text-xl mb-4">حدث خطأ في تحميل المشاريع</p>
-          <Button onClick={() => window.location.reload()}>
-            إعادة المحاولة
-          </Button>
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center bg-brand-bg">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center max-w-md mx-auto p-8"
+          >
+            <Card className="border-2 border-brand-sky-base bg-brand-bg shadow-xl">
+              <CardContent className="p-12">
+                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-3xl">⚠️</span>
+                </div>
+                
+                <h1 className="text-2xl font-bold text-brand-text-primary mb-4">
+                  حدث خطأ في تحميل المشاريع
+                </h1>
+                
+                <p className="text-brand-text-muted mb-8 leading-relaxed">
+                  عذراً، حدث خطأ أثناء تحميل معرض الأعمال. يرجى المحاولة مرة أخرى.
+                </p>
+
+                <Button
+                  onClick={() => window.location.reload()}
+                  className="bg-brand-sky-accent hover:bg-brand-sky-accent/90 text-white"
+                  data-testid="button-retry"
+                >
+                  إعادة المحاولة
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="gradient-light py-16 lg:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AnimatedText delay={0.2}>
-            <h1 className="text-4xl lg:text-6xl font-bold text-secondary mb-6">
-              معرض أعمالنا
-            </h1>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              استكشف مجموعة من مشاريعنا المميزة التي نفذناها بنجاح لعملائنا
-            </p>
-          </AnimatedText>
-        </div>
-      </section>
+      <Helmet>
+        <title>معرض أعمالنا | جينيوس سوفت وير كور</title>
+        <meta 
+          name="description" 
+          content="استكشف مجموعة متنوعة من المشاريع التي طورناها بعناية فائقة، من التطبيقات المحمولة إلى الأنظمة المعقدة. شاهد قصص نجاحنا مع عملائنا."
+        />
+        <meta name="keywords" content="معرض أعمال, مشاريع برمجية, تطبيقات محمولة, مواقع ويب, أنظمة إدارة" />
+        <meta property="og:title" content="معرض أعمالنا | جينيوس سوفت وير كور" />
+        <meta property="og:description" content="استكشف مجموعة متنوعة من المشاريع التي طورناها بعناية فائقة" />
+        <meta property="og:type" content="website" />
+      </Helmet>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <AnimatedCard key={index} delay={index * 0.1} className="text-center p-6">
-                <CardContent className="p-0">
-                  <motion.div
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-primary text-4xl mb-4"
-                  >
-                    <stat.icon size={48} />
-                  </motion.div>
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="text-3xl font-bold text-secondary mb-2"
-                  >
-                    {stat.value}
-                  </motion.div>
-                  <p className="text-gray-600">{stat.label}</p>
-                </CardContent>
-              </AnimatedCard>
-            ))}
-          </div>
-        </div>
-      </section>
+      <div className="min-h-screen bg-brand-bg">
+        {/* Enhanced Hero Section with Animated Statistics */}
+        <EnhancedPortfolioHero
+          totalProjects={portfolioStats.totalProjects}
+          totalIndustries={portfolioStats.totalIndustries}
+          yearsExperience={portfolioStats.yearsExperience}
+          satisfaction={portfolioStats.satisfaction}
+          totalClients={portfolioStats.totalClients}
+          totalTechnologies={portfolioStats.totalTechnologies}
+        />
 
-      {/* Enhanced Search Section */}
-      <section className="py-12 bg-light-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedSection delay={0.3}>
-            <EnhancedSearchBar
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              filters={filters}
-              onFiltersChange={setFilters}
-              availableTechnologies={availableTechnologies}
-              availableCategories={categories}
-              recentSearches={recentSearches}
-              popularSearches={popularSearches}
-              totalResults={filteredPortfolio.length}
-            />
-          </AnimatedSection>
-        </div>
-      </section>
+        {/* Enhanced Portfolio Grid with Advanced Filtering */}
+        <section id="projects-grid" className="relative z-10">
+          <EnhancedPortfolioGrid
+            showFilters={true}
+            showViewToggle={true}
+            showLoadMore={true}
+          />
+        </section>
 
-      {/* Portfolio Grid */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {isLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Skeleton key={i} className="h-80 rounded-xl" />
-              ))}
-            </div>
-          ) : filteredPortfolio && filteredPortfolio.length > 0 ? (
+        {/* Work Process Section */}
+        <section className="py-16 lg:py-24 bg-gradient-to-br from-brand-sky-light/20 to-brand-bg">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
-              layout
-              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16"
             >
-              {filteredPortfolio.map((project, index) => (
-                <AnimatedCard
-                  key={project.id}
-                  delay={index * 0.1}
-                  className="group overflow-hidden"
-                >
-                  <CardContent className="p-0">
-                    {/* Enhanced Project Gallery */}
-                    <EnhancedProjectGallery
-                      project={{
-                        id: project.id,
-                        title: project.title,
-                        imageUrl: project.imageUrl,
-                        category: project.category,
-                        technologies: project.technologies,
-                        description: project.description,
-                        gallery: [
-                          // Mock additional gallery images for demo
-                          {
-                            id: `${project.id}-2`,
-                            url: project.imageUrl,
-                            alt: `${project.title} - صورة إضافية`,
-                            type: 'image' as const,
-                            caption: 'لقطة شاشة من المشروع'
-                          }
-                        ]
-                      }}
-                    />
-                    
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <Badge variant="secondary" className="text-xs">
-                          {categories.find(c => c.id === project.category)?.label || project.category}
-                        </Badge>
-                        <div className="text-primary">
-                          <i className="fas fa-folder"></i>
-                        </div>
-                      </div>
-                      
-                      <h3 className="text-xl font-bold text-secondary mb-2 group-hover:text-primary transition-colors">
-                        {project.title}
-                      </h3>
-                      
-                      <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-2">
-                        {project.description}
-                      </p>
-                      
-                      {project.technologies && (
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {project.technologies.slice(0, 4).map((tech, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
-                              {tech}
-                            </Badge>
-                          ))}
-                          {project.technologies.length > 4 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{project.technologies.length - 4}
-                            </Badge>
-                          )}
-                        </div>
-                      )}
-                      
-                      <div className="flex items-center gap-2">
-                        <motion.button
-                          whileHover={{ x: 5 }}
-                          className="text-primary font-semibold cursor-pointer flex items-center flex-1"
-                        >
-                          تفاصيل المشروع
-                          <i className="fas fa-arrow-left mr-2"></i>
-                        </motion.button>
-                        
-                        {/* Quick actions */}
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          className="p-2 rounded-full bg-gray-100 hover:bg-primary hover:text-white transition-colors"
-                          title="زيارة المشروع"
-                        >
-                          <ExternalLink size={16} />
-                        </motion.button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </AnimatedCard>
-              ))}
-            </motion.div>
-          ) : (
-            <div className="text-center py-16">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="inline-flex items-center gap-2 mb-6"
               >
-                <i className="fas fa-search text-6xl text-gray-300 mb-4"></i>
-                <h3 className="text-xl font-semibold text-gray-500 mb-2">
-                  لم نجد مشاريع تطابق معايير البحث
-                </h3>
-                <p className="text-gray-400 mb-4">
-                  جرب تعديل كلمات البحث أو إزالة بعض المرشحات
-                </p>
-                <InteractiveButton
-                  onClick={() => {
-                    setSearchQuery('');
-                    setFilters({ technologies: [], categories: [], sortBy: 'newest' });
-                  }}
-                  className="btn-primary"
-                >
-                  مسح جميع المرشحات
-                </InteractiveButton>
+                <Sparkles className="w-5 h-5 text-brand-sky-accent" />
+                <span className="text-brand-sky-accent font-semibold">عمليتنا الاحترافية</span>
               </motion.div>
+
+              <h2 className="text-4xl lg:text-5xl font-bold text-brand-text-primary mb-6">
+                كيف نحقق النجاح لمشروعك
+              </h2>
+              <p className="text-xl text-brand-text-muted max-w-3xl mx-auto leading-relaxed">
+                منهجية عمل مدروسة ومجربة تضمن تسليم مشروعك بأعلى معايير الجودة
+              </p>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                {
+                  step: "01",
+                  title: "الاستشارة والتخطيط",
+                  description: "نستمع لأهدافك ونضع خطة استراتيجية شاملة",
+                  icon: "💡",
+                  color: "from-blue-500 to-blue-600",
+                  bgColor: "from-blue-50 to-blue-100"
+                },
+                {
+                  step: "02", 
+                  title: "التصميم والنماذج",
+                  description: "نصمم واجهات مستخدم جذابة وسهلة الاستخدام",
+                  icon: "🎨",
+                  color: "from-purple-500 to-purple-600",
+                  bgColor: "from-purple-50 to-purple-100"
+                },
+                {
+                  step: "03",
+                  title: "التطوير والبرمجة",
+                  description: "نطور المشروع باستخدام أحدث التقنيات العالمية",
+                  icon: "⚙️",
+                  color: "from-green-500 to-green-600",
+                  bgColor: "from-green-50 to-green-100"
+                },
+                {
+                  step: "04",
+                  title: "التسليم والدعم",
+                  description: "نسلم المشروع مع دعم فني متواصل ومتابعة دورية",
+                  icon: "🚀",
+                  color: "from-orange-500 to-orange-600",
+                  bgColor: "from-orange-50 to-orange-100"
+                },
+              ].map((process, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                >
+                  <Card className={`border-2 border-brand-sky-base bg-gradient-to-br ${process.bgColor} hover:border-brand-sky-accent hover:shadow-xl transition-all duration-400 h-full group`}>
+                    <CardContent className="p-8">
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className={`w-12 h-12 bg-gradient-to-br ${process.color} text-white rounded-lg flex items-center justify-center font-bold text-lg shadow-lg`}>
+                          {process.step}
+                        </div>
+                        <div className="text-4xl group-hover:scale-110 transition-transform duration-300">
+                          {process.icon}
+                        </div>
+                      </div>
+
+                      <h3 className="text-xl font-bold text-brand-text-primary mb-3 group-hover:text-brand-sky-accent transition-colors">
+                        {process.title}
+                      </h3>
+                      <p className="text-brand-text-muted leading-relaxed">
+                        {process.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-16 lg:py-24 bg-light-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimatedText className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold text-secondary mb-6">
-              كيف نعمل معك
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              عملية مدروسة تضمن تحقيق أفضل النتائج لمشروعك
-            </p>
-          </AnimatedText>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                step: "01",
-                title: "الاستشارة",
-                description: "نتفهم احتياجاتك ونضع الخطة المناسبة",
-                icon: "fas fa-comments",
-              },
-              {
-                step: "02", 
-                title: "التصميم",
-                description: "نصمم النماذج الأولية والواجهات",
-                icon: "fas fa-pencil-ruler",
-              },
-              {
-                step: "03",
-                title: "التطوير",
-                description: "نطور المشروع باستخدام أحدث التقنيات",
-                icon: "fas fa-code",
-              },
-              {
-                step: "04",
-                title: "التسليم",
-                description: "نسلم المشروع مع الدعم والصيانة",
-                icon: "fas fa-rocket",
-              },
-            ].map((process, index) => (
-              <AnimatedCard key={index} delay={index * 0.1} className="text-center p-6">
-                <CardContent className="p-0">
-                  <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                    {process.step}
-                  </div>
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-primary text-3xl mb-4"
-                  >
-                    <i className={process.icon}></i>
-                  </motion.div>
-                  <h3 className="text-lg font-bold text-secondary mb-3">
-                    {process.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {process.description}
-                  </p>
-                </CardContent>
-              </AnimatedCard>
-            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-16 lg:py-24 gradient-primary text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <AnimatedSection delay={0.3}>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              لديك فكرة مشروع؟
-            </h2>
-            <p className="text-xl mb-8 leading-relaxed opacity-90">
-              دعنا نساعدك في تحويل فكرتك إلى واقع رقمي مبهر يحقق أهدافك
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact">
-                <InteractiveButton
-                  className="bg-white text-primary hover:bg-gray-100 shadow-lg hover:shadow-xl"
-                  icon={<i className="fas fa-rocket"></i>}
-                >
-                  ابدأ مشروعك الآن
-                </InteractiveButton>
-              </Link>
-              <Link href="/services">
-                <InteractiveButton
-                  variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-primary"
-                  icon={<i className="fas fa-list"></i>}
-                >
-                  تصفح خدماتنا
-                </InteractiveButton>
-              </Link>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-    </div>
+        {/* CTA Section */}
+        <section className="py-16 lg:py-24 bg-gradient-to-br from-brand-sky-accent to-blue-600 text-white relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+              backgroundSize: '40px 40px'
+            }} />
+          </div>
+
+          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2, type: "spring" }}
+                className="inline-block text-6xl mb-6"
+              >
+                💼
+              </motion.div>
+
+              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+                جاهز لبدء مشروعك القادم؟
+              </h2>
+              
+              <p className="text-xl mb-10 leading-relaxed opacity-90 max-w-2xl mx-auto">
+                دعنا نحول رؤيتك إلى واقع رقمي مذهل يحقق أهدافك ويتجاوز توقعاتك
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/contact" data-testid="link-contact-cta">
+                  <Button
+                    size="lg"
+                    className="bg-white text-brand-sky-accent hover:bg-gray-100 shadow-2xl hover:shadow-3xl transition-all duration-300 px-8 py-6 text-lg font-bold group"
+                    data-testid="button-start-project"
+                  >
+                    <Rocket className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    ابدأ مشروعك الآن
+                    <motion.div
+                      className="mr-2"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                      <ArrowLeft className="w-5 h-5" />
+                    </motion.div>
+                  </Button>
+                </Link>
+
+                <Link href="/services" data-testid="link-services">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-white text-white hover:bg-white hover:text-brand-sky-accent transition-all duration-300 px-8 py-6 text-lg font-bold"
+                    data-testid="button-view-services"
+                  >
+                    <List className="w-5 h-5 ml-2" />
+                    تصفح خدماتنا
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      </div>
+    </Layout>
   );
 }
